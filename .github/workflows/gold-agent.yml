@@ -1,0 +1,55 @@
+name: Gold Agent (Cloud Run)
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/10 * * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gold-agent
+  cancel-in-progress: true
+
+jobs:
+  run-gold:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Gold Agent
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MAX_LOOPS: "50"
+          MAX_RETRIES: "3"
+        run: python gold_agent.py
+
+      - name: Commit & Push Results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add Done/ Personal/ Business/ Briefings/ Logs/ \
+                 run_log.md prompt_history.md Needs_Action/ Inbox/ || true
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git commit -m "Gold Agent: autonomous task processing + CEO briefing"
+          git push

@@ -1,0 +1,44 @@
+# =========================
+# Secrets & Credentials
+# =========================
+.env
+.env.*
+credentials.json
+token.json
+client_secret*.json
+*.credentials.json
+*.token.json
+
+# =========================
+# Python cache
+# =========================
+__pycache__/
+*.pyc
+*.pyo
+
+# =========================
+# Runtime / Generated Files
+# =========================
+Done/
+Approved/
+Pending_Approval/
+Plans/
+Personal/
+Business/
+Briefings/
+Logs/
+manual_input.txt
+run_log.md
+prompt_history.md
+
+# =========================
+# VS Code
+# =========================
+.vscode/
+
+# =========================
+# OS
+# =========================
+.DS_Store
+Thumbs.db
+.obsidian/
