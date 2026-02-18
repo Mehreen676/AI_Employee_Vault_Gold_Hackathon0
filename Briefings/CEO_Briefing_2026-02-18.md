@@ -1,6 +1,6 @@
 # Weekly CEO Briefing
 
-**Generated:** 2026-02-18 09:19 UTC
+**Generated:** 2026-02-18 10:00 UTC
 **Week:** 2026-02-16 to 2026-02-22 (ISO Week 8)
 **Day:** Wednesday
 
@@ -8,10 +8,10 @@
 
 ## Executive Summary
 
-- **Tasks Completed This Week:** 0
-- **Business Tasks Active:** 0
-- **Personal Tasks Active:** 0
-- **Total System Actions (7d):** 24
+- **Tasks Completed This Week:** 27
+- **Business Tasks Active:** 1
+- **Personal Tasks Active:** 1
+- **Total System Actions (7d):** 58
 - **Errors (7d):** 0
 - **System Health:** HEALTHY
 
@@ -19,17 +19,26 @@
 
 ## Completed Tasks
 
-- No tasks completed this week yet.
+- **cloud-openai-task.md**: Cloud Silver Agent processed this task successfully.
+- **demo.md**: **Task Summary:**
+- **demo_business.md**: Gold Agent processed this task. (fallback: OpenAI not configured)
+- **demo_personal.md**: Gold Agent processed this task. (fallback: OpenAI not configured)
+- **demo_task.md**: This task has been processed according to the defined Agent Skill workflow.
+- **email_20260217_104533_19c44327c1ae1340.md**: Silver Agent processed this task. (fallback: OpenAI not configured)
+- **email_20260217_104533_19c4e80dee75362a.md**: Silver Agent processed this task. (fallback: OpenAI not configured)
+- **email_20260217_104533_19c6a93d1722f292.md**: Silver Agent processed this task. (fallback: OpenAI not configured)
+- **email_20260217_104534_19c34b80aa265adb.md**: Silver Agent processed this task. (fallback: OpenAI not configured)
+- **email_20260217_104534_19c42e0453fb23a1.md**: Silver Agent processed this task. (fallback: OpenAI not configured)
 
 ---
 
 ## Domain Distribution
 
-### Business (0 active)
-- No active business tasks.
+### Business (1 active)
+- demo_business.md
 
-### Personal (0 active)
-- No active personal tasks.
+### Personal (1 active)
+- demo_personal.md
 
 ---
 
@@ -37,17 +46,23 @@
 
 | Action | Count |
 |--------|-------|
-| mcp_audit_ops.get_recent_actions | 2 |
-| mcp_calendar_ops.get_current_week | 4 |
-| gold_agent.agent_complete | 1 |
-| mcp_file_ops.list_tasks | 6 |
-| gold_agent.loop_start | 2 |
-| ceo_briefing.save_briefing | 1 |
-| domain_router.get_all_domain_tasks | 2 |
-| gold_agent.loop_complete | 2 |
-| gold_agent.agent_start | 2 |
-| mcp_audit_ops.get_action_summary | 1 |
-| mcp_file_ops.write_task | 1 |
+| mcp_audit_ops.get_recent_actions | 4 |
+| mcp_calendar_ops.get_current_week | 6 |
+| gold_agent.agent_complete | 2 |
+| mcp_file_ops.list_tasks | 10 |
+| gold_agent.loop_start | 3 |
+| ceo_briefing.save_briefing | 2 |
+| domain_router.get_all_domain_tasks | 3 |
+| gold_agent.loop_complete | 3 |
+| gold_agent.agent_start | 3 |
+| mcp_audit_ops.get_action_summary | 2 |
+| mcp_file_ops.write_task | 6 |
+| gold_agent.openai_fallback | 2 |
+| mcp_file_ops.move_task | 2 |
+| domain_router.classify_task | 4 |
+| mcp_file_ops.read_task | 2 |
+| gold_agent.task_completed | 2 |
+| domain_router.route_task | 2 |
 
 ---
 
