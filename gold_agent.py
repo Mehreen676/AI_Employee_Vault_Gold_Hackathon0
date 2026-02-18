@@ -5,6 +5,7 @@ Ralph Wiggum Loop: Agent keeps running until ALL tasks are moved to Done.
 Each iteration: scan -> classify -> process -> route -> verify -> loop.
 Graceful degradation: falls back if OpenAI unavailable.
 Error recovery: retries failed tasks up to MAX_RETRIES before skipping.
+Neon DB: writes agent_runs + events for judge-proof audit trail.
 """
 
 from __future__ import annotations
@@ -27,8 +28,23 @@ from mcp_file_ops import list_tasks, read_task, write_task, move_task
 from mcp_calendar_ops import get_current_week, is_briefing_due
 from mcp_email_ops import classify_sender
 from domain_router import classify_task, route_task
-from audit_logger import log_action
+from audit_logger import log_action, set_run_id, get_db_event_count
 from ceo_briefing import save_briefing
+
+# -------- Neon DB (optional) --------
+_db_enabled = False
+_SessionLocal = None
+_AgentRun = None
+
+try:
+    from backend.db import db_available, SessionLocal
+    from backend.models import AgentRun
+    if db_available and SessionLocal is not None:
+        _db_enabled = True
+        _SessionLocal = SessionLocal
+        _AgentRun = AgentRun
+except Exception:
+    pass
 
 # -------- Config --------
 BASE_DIR = Path(__file__).resolve().parent
@@ -286,6 +302,46 @@ def ralph_wiggum_loop() -> dict:
     return stats
 
 
+# -------- DB helpers --------
+def db_start_run() -> int | None:
+    """Insert a new agent_runs row. Returns run_id or None."""
+    if not _db_enabled or _SessionLocal is None or _AgentRun is None:
+        return None
+    try:
+        session = _SessionLocal()
+        try:
+            row = _AgentRun(model=MODEL, loops=0, processed=0, failed=0)
+            session.add(row)
+            session.commit()
+            session.refresh(row)
+            run_id = row.id
+            return run_id
+        finally:
+            session.close()
+    except Exception as e:
+        print(f"  [DB] start_run error: {e}")
+        return None
+
+
+def db_finish_run(run_id: int, stats: dict) -> None:
+    """Update the agent_runs row with final stats."""
+    if not _db_enabled or _SessionLocal is None or _AgentRun is None:
+        return
+    try:
+        session = _SessionLocal()
+        try:
+            row = session.query(_AgentRun).filter(_AgentRun.id == run_id).first()
+            if row:
+                row.loops = stats.get("loops", 0)
+                row.processed = stats.get("tasks_processed", 0)
+                row.failed = stats.get("tasks_failed", 0)
+                session.commit()
+        finally:
+            session.close()
+    except Exception as e:
+        print(f"  [DB] finish_run error: {e}")
+
+
 # -------- Main --------
 def main() -> None:
     print("=" * 60)
@@ -301,10 +357,27 @@ def main() -> None:
     if not PROMPT_HISTORY.exists():
         PROMPT_HISTORY.write_text("# Prompt History (Gold Tier)\n\n", encoding="utf-8")
 
+    # ---- DB: start run ----
+    print(f"  DB enabled: {_db_enabled}")
+    run_id = db_start_run()
+    if run_id is not None:
+        set_run_id(run_id)
+        print(f"  Inserted run_id={run_id}")
+    else:
+        print("  DB run_id: None (DB not available or not configured)")
+
+    # ---- OpenAI check ----
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    print(f"  OpenAI configured: {bool(api_key and OpenAI is not None)}")
+    if api_key and OpenAI is not None:
+        print(f"  OpenAI model: {MODEL}")
+
     log_action(AGENT_NAME, "agent_start", {
         "model": MODEL,
         "max_loops": MAX_LOOPS,
         "max_retries": MAX_RETRIES,
+        "db_enabled": _db_enabled,
+        "run_id": run_id,
     })
 
     # Run the Ralph Wiggum loop
@@ -318,19 +391,34 @@ def main() -> None:
         log_action(AGENT_NAME, "briefing_error", {"error": str(e)}, success=False)
         print(f"\nCEO Briefing skipped (error: {e})")
 
+    # ---- DB: finish run ----
+    if run_id is not None:
+        db_finish_run(run_id, stats)
+
+    db_events = get_db_event_count()
+
     # Final summary
     print(f"\n{'=' * 60}")
     print(f"  GOLD AGENT COMPLETE")
     print(f"  Loops: {stats['loops']}")
     print(f"  Processed: {stats['tasks_processed']}")
     print(f"  Failed: {stats['tasks_failed']}")
+    print(f"  DB enabled: {_db_enabled}")
+    print(f"  Inserted run_id={run_id}")
+    print(f"  DB events count={db_events}")
     print(f"{'=' * 60}")
 
-    log_action(AGENT_NAME, "agent_complete", stats)
+    log_action(AGENT_NAME, "agent_complete", {
+        **stats,
+        "db_enabled": _db_enabled,
+        "run_id": run_id,
+        "db_events": db_events,
+    })
     append_log(
         f"{utc_ts()} - Gold Agent Complete | "
         f"loops={stats['loops']} processed={stats['tasks_processed']} "
-        f"failed={stats['tasks_failed']}\n"
+        f"failed={stats['tasks_failed']} db={_db_enabled} run_id={run_id} "
+        f"db_events={db_events}\n"
     )
 
 

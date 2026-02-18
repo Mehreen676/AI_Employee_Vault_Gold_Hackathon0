@@ -5,12 +5,17 @@ Usage:
     python -m backend.init_db
 """
 
-from .db import engine, Base
-from .models import Task  # noqa: F401 — registers the model with Base
+from .db import engine, db_available, Base
+# Import models so they register with Base.metadata
+from .models import Task, AgentRun, Event  # noqa: F401
 
 
 def main() -> None:
-    print(f"Connecting to database …")
+    if not db_available:
+        print("DATABASE_URL not set — skipping DB init.")
+        return
+
+    print("Connecting to database ...")
     Base.metadata.create_all(bind=engine)
     print("Database tables created successfully.")
 
