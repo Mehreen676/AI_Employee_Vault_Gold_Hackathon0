@@ -19,18 +19,10 @@ __pycache__/
 # =========================
 # Runtime / Generated Files
 # =========================
-Done/
 Approved/
 Pending_Approval/
 Plans/
-Personal/
-Business/
-Briefings/
-Logs/
 manual_input.txt
-run_log.md
-prompt_history.md
-
 # =========================
 # VS Code
 # =========================
