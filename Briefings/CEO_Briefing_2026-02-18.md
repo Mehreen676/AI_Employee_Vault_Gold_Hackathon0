@@ -1,6 +1,6 @@
 # Weekly CEO Briefing
 
-**Generated:** 2026-02-18 08:43 UTC
+**Generated:** 2026-02-18 09:19 UTC
 **Week:** 2026-02-16 to 2026-02-22 (ISO Week 8)
 **Day:** Wednesday
 
@@ -11,7 +11,7 @@
 - **Tasks Completed This Week:** 0
 - **Business Tasks Active:** 0
 - **Personal Tasks Active:** 0
-- **Total System Actions (7d):** 9
+- **Total System Actions (7d):** 24
 - **Errors (7d):** 0
 - **System Health:** HEALTHY
 
@@ -37,12 +37,17 @@
 
 | Action | Count |
 |--------|-------|
-| mcp_calendar_ops.get_current_week | 2 |
-| mcp_file_ops.list_tasks | 3 |
-| gold_agent.loop_start | 1 |
-| domain_router.get_all_domain_tasks | 1 |
-| gold_agent.loop_complete | 1 |
-| gold_agent.agent_start | 1 |
+| mcp_audit_ops.get_recent_actions | 2 |
+| mcp_calendar_ops.get_current_week | 4 |
+| gold_agent.agent_complete | 1 |
+| mcp_file_ops.list_tasks | 6 |
+| gold_agent.loop_start | 2 |
+| ceo_briefing.save_briefing | 1 |
+| domain_router.get_all_domain_tasks | 2 |
+| gold_agent.loop_complete | 2 |
+| gold_agent.agent_start | 2 |
+| mcp_audit_ops.get_action_summary | 1 |
+| mcp_file_ops.write_task | 1 |
 
 ---
 
