@@ -1,36 +1,31 @@
-# =========================
-# Secrets & Credentials
-# =========================
+# --- Local secrets ---
 .env
-.env.*
 credentials.json
 token.json
-client_secret*.json
-*.credentials.json
-*.token.json
 
-# =========================
-# Python cache
-# =========================
+# --- Python ---
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+.venv/
+venv/
 
-# =========================
-# Runtime / Generated Files
-# =========================
-Approved/
-Pending_Approval/
-Plans/
-manual_input.txt
-# =========================
-# VS Code
-# =========================
-.vscode/
-
-# =========================
-# OS
-# =========================
+# --- OS / editor ---
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/
+
+# --- Obsidian / Claude local ---
 .obsidian/
+.claude/settings.local.json
+
+# --- Keep generated outputs tracked for judges (DO NOT ignore these) ---
+# Briefings/
+# Business/
+# Done/
+# Logs/
+# Personal/
+# prompt_history.md
+# run_log.md
