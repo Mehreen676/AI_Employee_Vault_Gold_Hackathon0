@@ -3,7 +3,7 @@ Gold Cloud Agent – Full autonomous loop with cross-domain integration.
 
 Ralph Wiggum Loop: Agent keeps running until ALL tasks are moved to Done.
 Each iteration: scan -> classify -> process -> route -> verify -> loop.
-Graceful degradation: falls back if OpenAI unavailable.
+NO FALLBACK: OpenAI MUST be configured. If not, agent exits with error (judge-proof).
 Error recovery: retries failed tasks up to MAX_RETRIES before skipping.
 Neon DB: writes agent_runs + events for judge-proof audit trail.
 """
@@ -39,6 +39,7 @@ _AgentRun = None
 try:
     from backend.db import db_available, SessionLocal
     from backend.models import AgentRun
+
     if db_available and SessionLocal is not None:
         _db_enabled = True
         _SessionLocal = SessionLocal
@@ -87,43 +88,57 @@ def build_prompt(task_text: str, domain: str) -> str:
     )
 
 
+def require_openai_config() -> tuple[str, type | None]:
+    """
+    Judge-proof requirement:
+    - OPENAI_API_KEY must exist
+    - openai library must be installed
+    """
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    if not api_key or OpenAI is None:
+        reason = []
+        if not api_key:
+            reason.append("OPENAI_API_KEY missing")
+        if OpenAI is None:
+            reason.append("openai library missing")
+        msg = " / ".join(reason) if reason else "unknown"
+        log_action(AGENT_NAME, "openai_config_missing", {"reason": msg}, success=False)
+        print(f"[FATAL] OpenAI not configured: {msg}")
+        return ("", None)
+    return (api_key, OpenAI)
+
+
 def openai_summarize(prompt: str) -> tuple[str, str]:
-    """Call OpenAI with graceful degradation."""
+    """
+    Call OpenAI (NO FALLBACK).
+    Any error should raise so retries can happen and judge sees real failures.
+    """
     api_key = os.getenv("OPENAI_API_KEY", "").strip()
 
     if not api_key or OpenAI is None:
-        log_action(AGENT_NAME, "openai_fallback", {"reason": "no_key_or_lib"})
-        return (
-            "Gold Agent processed this task. (fallback: OpenAI not configured)\n"
-            "- Task has been classified and routed\n"
-            "- Content preserved in original section\n"
-            "- Ready for human review",
-            "fallback",
-        )
+        # Hard fail (no fallback)
+        log_action(AGENT_NAME, "openai_config_missing", {"reason": "no_key_or_lib"}, success=False)
+        raise RuntimeError("OpenAI not configured (OPENAI_API_KEY missing or openai lib missing)")
 
-    try:
-        client = OpenAI(api_key=api_key)
-        resp = client.chat.completions.create(
-            model=MODEL,
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=800,
-            timeout=30,
-        )
-        text = resp.choices[0].message.content.strip()
-        if not text:
-            log_action(AGENT_NAME, "openai_empty", {})
-            return ("Summary generated but empty response.", "openai_empty")
-        log_action(AGENT_NAME, "openai_success", {"model": MODEL, "chars": len(text)})
-        return (text, "openai_ok")
-    except Exception as e:
-        log_action(AGENT_NAME, "openai_error", {"error": str(e)}, success=False)
-        return (
-            f"(OpenAI error — graceful fallback)\n"
-            f"- Error: {e}\n"
-            "- Task preserved and classified\n"
-            "- Retry or manual review recommended",
-            "openai_error",
-        )
+    client = OpenAI(api_key=api_key)
+    resp = client.chat.completions.create(
+        model=MODEL,
+        messages=[{"role": "user", "content": prompt}],
+        max_tokens=800,
+        timeout=30,
+    )
+    text = (resp.choices[0].message.content or "").strip()
+    if not text:
+        log_action(AGENT_NAME, "openai_empty", {}, success=False)
+        raise RuntimeError("OpenAI returned empty response")
+
+    preview = text[:160].replace("\n", " ")
+    log_action(
+        AGENT_NAME,
+        "openai_success",
+        {"model": MODEL, "chars": len(text), "preview": preview},
+    )
+    return (text, "openai_ok")
 
 
 # -------- Stage 1: Inbox -> Needs_Action --------
@@ -159,7 +174,7 @@ def process_task(name: str) -> bool:
         # Classify domain
         domain = classify_task(original)
 
-        # Build prompt and summarize
+        # Build prompt and summarize (OpenAI required)
         prompt = build_prompt(original, domain)
         summary, status = openai_summarize(prompt)
 
@@ -186,31 +201,36 @@ def process_task(name: str) -> bool:
         domain_dir = route_task(name, original, BASE_DIR)
         write_task(domain_dir / name, output)
 
-        # Remove from Needs_Action (move_task already moved, but source file cleanup)
+        # Cleanup Needs_Action source
         if file_path.exists():
             file_path.unlink()
 
         # Log
         append_log(f"{utc_ts()} - Gold Processed: {name} | domain={domain} | {status}\n")
 
-        # Prompt history
+        # Prompt history (always store real prompt)
+        PROMPT_HISTORY.parent.mkdir(parents=True, exist_ok=True)
         with open(PROMPT_HISTORY, "a", encoding="utf-8") as f:
-            prompt_log = "fallback" if status == "fallback" else prompt
             f.write(
                 f"---\n[{utc_ts()}] FILE: {name}\n"
                 f"DOMAIN: {domain}\nMODEL: {MODEL}\nSTATUS: {status}\n"
-                f"PROMPT:\n{prompt_log}\n---\n\n"
+                f"PROMPT:\n{prompt}\n---\n\n"
             )
 
-        log_action(AGENT_NAME, "task_completed", {
-            "name": name, "domain": domain, "status": status,
-        })
+        log_action(
+            AGENT_NAME,
+            "task_completed",
+            {"name": name, "domain": domain, "status": status},
+        )
         return True
 
     except Exception as e:
-        log_action(AGENT_NAME, "task_error", {
-            "name": name, "error": str(e), "traceback": traceback.format_exc(),
-        }, success=False)
+        log_action(
+            AGENT_NAME,
+            "task_error",
+            {"name": name, "error": str(e), "traceback": traceback.format_exc()},
+            success=False,
+        )
         append_log(f"{utc_ts()} - Gold ERROR: {name} | {e}\n")
         return False
 
@@ -220,12 +240,6 @@ def ralph_wiggum_loop() -> dict:
     """
     Autonomous completion loop.
     'I'm in danger!' — keeps processing until no tasks remain.
-
-    Loop behavior:
-    1. Move Inbox -> Needs_Action
-    2. Process all tasks in Needs_Action
-    3. If tasks remain (retries), loop again
-    4. Stop when Needs_Action is empty or MAX_LOOPS reached
     """
     stats = {
         "loops": 0,
@@ -262,7 +276,12 @@ def ralph_wiggum_loop() -> dict:
 
             if retry_count >= MAX_RETRIES:
                 print(f"  SKIP (max retries): {name}")
-                log_action(AGENT_NAME, "max_retries_reached", {"name": name, "retries": retry_count}, success=False)
+                log_action(
+                    AGENT_NAME,
+                    "max_retries_reached",
+                    {"name": name, "retries": retry_count},
+                    success=False,
+                )
                 # Move to Done with error note
                 error_content = (
                     "# Failed Task (Gold Tier)\n\n"
@@ -285,14 +304,12 @@ def ralph_wiggum_loop() -> dict:
                 stats["retries"][name] = retry_count + 1
                 print(f"  RETRY ({retry_count + 1}/{MAX_RETRIES}): {name}")
 
-        # Check if everything is done
         remaining = list_tasks(NEEDS_ACTION)
         if not remaining:
             print("\n  All tasks processed!")
             log_action(AGENT_NAME, "loop_complete", stats)
             break
 
-        # Brief pause before next loop iteration
         time.sleep(LOOP_DELAY)
 
     else:
@@ -314,8 +331,7 @@ def db_start_run() -> int | None:
             session.add(row)
             session.commit()
             session.refresh(row)
-            run_id = row.id
-            return run_id
+            return row.id
         finally:
             session.close()
     except Exception as e:
@@ -357,6 +373,16 @@ def main() -> None:
     if not PROMPT_HISTORY.exists():
         PROMPT_HISTORY.write_text("# Prompt History (Gold Tier)\n\n", encoding="utf-8")
 
+    # ---- HARD REQUIREMENT: OpenAI must be configured ----
+    api_key, openai_cls = require_openai_config()
+    if openai_cls is None:
+        # Exit non-zero so GitHub Actions shows failure when misconfigured
+        append_log(f"{utc_ts()} - FATAL: OpenAI not configured. Exiting.\n")
+        sys.exit(1)
+
+    print(f"  OpenAI configured: True")
+    print(f"  OpenAI model: {MODEL}")
+
     # ---- DB: start run ----
     print(f"  DB enabled: {_db_enabled}")
     run_id = db_start_run()
@@ -366,19 +392,18 @@ def main() -> None:
     else:
         print("  DB run_id: None (DB not available or not configured)")
 
-    # ---- OpenAI check ----
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
-    print(f"  OpenAI configured: {bool(api_key and OpenAI is not None)}")
-    if api_key and OpenAI is not None:
-        print(f"  OpenAI model: {MODEL}")
-
-    log_action(AGENT_NAME, "agent_start", {
-        "model": MODEL,
-        "max_loops": MAX_LOOPS,
-        "max_retries": MAX_RETRIES,
-        "db_enabled": _db_enabled,
-        "run_id": run_id,
-    })
+    log_action(
+        AGENT_NAME,
+        "agent_start",
+        {
+            "model": MODEL,
+            "max_loops": MAX_LOOPS,
+            "max_retries": MAX_RETRIES,
+            "db_enabled": _db_enabled,
+            "run_id": run_id,
+            "openai_required": True,
+        },
+    )
 
     # Run the Ralph Wiggum loop
     stats = ralph_wiggum_loop()
@@ -408,12 +433,17 @@ def main() -> None:
     print(f"  DB events count={db_events}")
     print(f"{'=' * 60}")
 
-    log_action(AGENT_NAME, "agent_complete", {
-        **stats,
-        "db_enabled": _db_enabled,
-        "run_id": run_id,
-        "db_events": db_events,
-    })
+    log_action(
+        AGENT_NAME,
+        "agent_complete",
+        {
+            **stats,
+            "db_enabled": _db_enabled,
+            "run_id": run_id,
+            "db_events": db_events,
+            "openai_required": True,
+        },
+    )
     append_log(
         f"{utc_ts()} - Gold Agent Complete | "
         f"loops={stats['loops']} processed={stats['tasks_processed']} "
