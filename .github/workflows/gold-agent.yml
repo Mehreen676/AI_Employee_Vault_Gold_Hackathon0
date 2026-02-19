@@ -46,11 +46,10 @@ jobs:
 
       - name: Commit & Push Results
         run: |
+          set -e
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-
-          # ✅ avoid non-fast-forward push errors
-          git pull origin main --rebase
 
           git add Done/ Personal/ Business/ Briefings/ Logs/ \
                  run_log.md prompt_history.md Needs_Action/ Inbox/ || true
@@ -61,4 +60,9 @@ jobs:
           fi
 
           git commit -m "Gold Agent: autonomous task processing + CEO briefing"
-          git push origin main
+
+          # ✅ now rebase safely (working tree clean because we committed)
+          git pull --rebase origin main || true
+
+          # ✅ push with one retry if race happens (another run pushed in parallel)
+          git push origin main || (sleep 2 && git pull --rebase origin main && git push origin main)
