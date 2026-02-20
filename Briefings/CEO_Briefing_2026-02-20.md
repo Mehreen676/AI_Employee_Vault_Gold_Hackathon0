@@ -1,6 +1,6 @@
 # Weekly CEO Briefing
 
-**Generated:** 2026-02-20 19:47 UTC
+**Generated:** 2026-02-20 20:15 UTC
 **Week:** 2026-02-16 to 2026-02-22 (ISO Week 8)
 **Day:** Friday
 
@@ -11,7 +11,7 @@
 - **Tasks Completed This Week:** 27
 - **Business Tasks Active:** 1
 - **Personal Tasks Active:** 1
-- **Total System Actions (7d):** 1133
+- **Total System Actions (7d):** 1158
 - **Errors (7d):** 0
 - **System Health:** HEALTHY
 
@@ -46,21 +46,21 @@
 
 | Action | Count |
 |--------|-------|
-| mcp_audit_ops.get_recent_actions | 90 |
-| mcp_calendar_ops.get_current_week | 92 |
-| gold_agent.agent_complete | 45 |
-| mcp_file_ops.list_tasks | 139 |
-| gold_agent.loop_start | 46 |
-| ceo_briefing.save_briefing | 45 |
-| domain_router.get_all_domain_tasks | 46 |
-| gold_agent.loop_complete | 46 |
-| gold_agent.agent_start | 46 |
-| mcp_audit_ops.get_action_summary | 45 |
-| mcp_file_ops.write_task | 49 |
+| mcp_audit_ops.get_recent_actions | 92 |
+| mcp_calendar_ops.get_current_week | 94 |
+| gold_agent.agent_complete | 46 |
+| mcp_file_ops.list_tasks | 142 |
+| gold_agent.loop_start | 47 |
+| ceo_briefing.save_briefing | 46 |
+| domain_router.get_all_domain_tasks | 47 |
+| gold_agent.loop_complete | 47 |
+| gold_agent.agent_start | 47 |
+| mcp_audit_ops.get_action_summary | 46 |
+| mcp_file_ops.write_task | 50 |
 | gold_agent.openai_fallback | 2 |
 | mcp_file_ops.move_task | 2 |
 | domain_router.classify_task | 4 |
-| mcp_file_ops.read_task | 432 |
+| mcp_file_ops.read_task | 442 |
 | gold_agent.task_completed | 2 |
 | domain_router.route_task | 2 |
 
