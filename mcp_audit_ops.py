@@ -28,6 +28,8 @@ def get_recent_actions(hours: int = 24) -> list[dict]:
     for log_file in sorted(LOGS_DIR.glob("*.json")):
         try:
             data = json.loads(log_file.read_text(encoding="utf-8"))
+            if not isinstance(data, dict):
+                continue  # skip daily array logs (vault_logger format)
             ts = datetime.fromisoformat(data.get("timestamp", ""))
             if ts >= cutoff:
                 entries.append(data)
