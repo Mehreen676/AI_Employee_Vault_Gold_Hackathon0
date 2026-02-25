@@ -592,6 +592,46 @@ make demo-list      # prints the scenario table
 
 ---
 
+## Social MCP Demo (Safe Stub)
+
+The `social_mcp_stub` provides a **permanently safe** social media integration.
+No real post is ever sent — a hardcoded `social_safety_gate` blocks live posting
+even when `MCP_DRY_RUN=false`.  All actions are logged to `Logs/` as JSON.
+
+### Run the demo in 3 commands
+
+```bash
+# Step 1 — drop a demo task into Inbox
+python tools/load_demo_task.py facebook_post_demo
+
+# Step 2 — run Gold Agent (HITL + MCP dispatch)
+python gold_agent.py
+
+# Step 3 — generate judge-ready evidence pack
+python tools/generate_evidence_pack.py
+```
+
+### What this demonstrates
+
+- `social_post_facebook`, `social_post_instagram`, `social_post_twitter`, `social_get_analytics`
+  are all registered in the MCP registry (verified live in `Evidence/REGISTERED_MCP_TOOLS.json`).
+- `DRY_RUN=true` (default): returns `dry_run_logged` + writes JSON to `Logs/`.
+- `DRY_RUN=false`: `social_safety_gate` fires → returns `blocked_live_mode` (no real call).
+- Full end-to-end dry-run proof in `Evidence/SOCIAL_DEMO.md`.
+
+### Available social demo scenarios
+
+```bash
+python tools/load_demo_task.py --list        # show all scenarios
+python tools/load_demo_task.py facebook_post_demo
+python tools/load_demo_task.py instagram_post_demo
+python tools/load_demo_task.py twitter_post_demo
+```
+
+See `docs/SOCIAL_DEMO.md` for the full 60-second walkthrough.
+
+---
+
 ## Tier Progression
 
 | Tier | Features |
