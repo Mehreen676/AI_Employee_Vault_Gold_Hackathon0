@@ -30,6 +30,7 @@ from mcp_email_ops import classify_sender
 from domain_router import classify_task, route_task
 from audit_logger import log_action, set_run_id, get_db_event_count
 from ceo_briefing import save_briefing
+from utils.retry import with_retry
 
 # -------- Neon DB (optional) --------
 _db_enabled = False
@@ -55,6 +56,7 @@ DONE = BASE_DIR / "Done"
 PERSONAL = BASE_DIR / "Personal"
 BUSINESS = BASE_DIR / "Business"
 LOGS_DIR = BASE_DIR / "Logs"
+FAILED_TASKS = BASE_DIR / "Failed_Tasks"  # Dead-letter queue for exhausted retries
 RUN_LOG = BASE_DIR / "run_log.md"
 PROMPT_HISTORY = BASE_DIR / "prompt_history.md"
 
@@ -108,9 +110,17 @@ def require_openai_config() -> tuple[str, type | None]:
     return (api_key, OpenAI)
 
 
+@with_retry(
+    max_attempts=3,
+    base_delay=2.0,
+    backoff=2.0,
+    max_delay=30.0,
+    exceptions=(Exception,),
+)
 def openai_summarize(prompt: str) -> tuple[str, str]:
     """
-    Call OpenAI (NO FALLBACK).
+    Call OpenAI (NO FALLBACK). Wrapped with exponential-backoff retry
+    (up to 3 attempts, 2s/4s delays) to handle transient API failures.
     Any error should raise so retries can happen and judge sees real failures.
     """
     api_key = os.getenv("OPENAI_API_KEY", "").strip()
@@ -275,24 +285,33 @@ def ralph_wiggum_loop() -> dict:
             retry_count = stats["retries"].get(name, 0)
 
             if retry_count >= MAX_RETRIES:
-                print(f"  SKIP (max retries): {name}")
+                print(f"  DEAD-LETTER (max retries): {name}")
                 log_action(
                     AGENT_NAME,
                     "max_retries_reached",
                     {"name": name, "retries": retry_count},
                     success=False,
                 )
-                # Move to Done with error note
+                # Move to Failed_Tasks/ (dead-letter queue)
+                FAILED_TASKS.mkdir(parents=True, exist_ok=True)
                 error_content = (
-                    "# Failed Task (Gold Tier)\n\n"
+                    "# Failed Task (Gold Tier — Dead-Letter)\n\n"
                     f"**Error:** Max retries ({MAX_RETRIES}) exceeded\n"
-                    f"**Time:** {utc_ts()}\n\n"
-                    "Status: Failed\n"
+                    f"**Time:** {utc_ts()}\n"
+                    f"**Attempts:** {retry_count}\n\n"
+                    "Status: Failed\n\n"
+                    "---\n"
+                    "_Review this file, fix the underlying issue, then move it back_\n"
+                    "_to `Inbox/` to reprocess or delete it to discard._\n"
                 )
-                write_task(DONE / name, error_content)
+                write_task(FAILED_TASKS / name, error_content)
                 src = NEEDS_ACTION / name
                 if src.exists():
                     src.unlink()
+                append_log(
+                    f"{utc_ts()} - Gold DEAD-LETTER: {name} | "
+                    f"retries={retry_count} | moved to Failed_Tasks/\n"
+                )
                 stats["tasks_failed"] += 1
                 continue
 
@@ -365,7 +384,7 @@ def main() -> None:
     print("=" * 60)
 
     # Ensure directories exist
-    for d in [INBOX, NEEDS_ACTION, DONE, PERSONAL, BUSINESS, LOGS_DIR]:
+    for d in [INBOX, NEEDS_ACTION, DONE, PERSONAL, BUSINESS, LOGS_DIR, FAILED_TASKS]:
         d.mkdir(parents=True, exist_ok=True)
 
     if not RUN_LOG.exists():

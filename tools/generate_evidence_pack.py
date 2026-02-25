@@ -79,6 +79,14 @@ def _latest_run() -> dict:
     return {}
 
 
+def _failed_tasks_count() -> int:
+    """Return the number of .md files currently in Failed_Tasks/ (dead-letter queue)."""
+    failed_dir = BASE_DIR / "Failed_Tasks"
+    if not failed_dir.exists():
+        return 0
+    return sum(1 for f in failed_dir.iterdir() if f.suffix == ".md" and f.name != "README.md")
+
+
 def _capture_demo(action_type: str, payload: dict) -> str:
     """Run dispatch_action and capture stdout + return value."""
     buf = io.StringIO()
@@ -108,10 +116,19 @@ def gen_registered_mcp_tools(registry: dict) -> None:
 
 def gen_last_run_summary() -> None:
     run = _latest_run()
+    failed_queued = _failed_tasks_count()
     data = {
         "generated": _now(),
         "source": "run_log.md",
         **run,
+        "failed_tasks_queued": failed_queued,
+        "failed_tasks_dir": "Failed_Tasks/",
+        "failed_tasks_note": (
+            "Tasks that exhausted all retry attempts. "
+            "See Failed_Tasks/README.md for remediation steps."
+            if failed_queued > 0
+            else "Dead-letter queue is empty — all tasks processed successfully."
+        ),
     }
     _write("LAST_RUN_SUMMARY.json", json.dumps(data, indent=2))
 
@@ -380,6 +397,14 @@ All {len(registry)} action types verified live from `mcp.registry.list_registere
 
 
 def gen_readme(registry: dict, run: dict) -> None:
+    failed_queued = _failed_tasks_count()
+    failed_line = (
+        f"| `Failed_Tasks/` | **{failed_queued} task(s)** in dead-letter queue — "
+        "see `Failed_Tasks/README.md` |"
+        if failed_queued > 0
+        else "| `Failed_Tasks/` | Dead-letter queue empty — all tasks processed successfully |"
+    )
+
     content = f"""# Evidence Pack — AI Employee Vault Gold Tier
 
 Generated: {_now()}
@@ -415,6 +440,16 @@ ls Logs/  # JSON audit log written
 | `LAST_RUN_SUMMARY.json` | Latest run: run_id={run.get('run_id', 'n/a')}, db_events={run.get('db_events', 'n/a')} |
 | `ODOO_DEMO.md` | Dry-run proof for 3 Odoo MCP tools |
 | `SOCIAL_DEMO.md` | Dry-run proof for 4 Social MCP tools (safety gate demo) |
+
+---
+
+## Dead-Letter Queue
+
+{failed_line}
+
+Failed tasks are preserved in `Failed_Tasks/` for review and reprocessing.
+The agent uses `@with_retry` (exponential backoff, 3 attempts) before a task
+is declared failed and moved to the dead-letter queue.
 
 ---
 
@@ -613,6 +648,12 @@ def main() -> None:
     if run:
         print(f"  [evidence] Latest run: run_id={run.get('run_id')}, "
               f"db_events={run.get('db_events')}")
+
+    failed_queued = _failed_tasks_count()
+    if failed_queued > 0:
+        print(f"  [evidence] WARNING: Failed_Tasks/ has {failed_queued} item(s) in dead-letter queue")
+    else:
+        print(f"  [evidence] Failed_Tasks/ dead-letter queue: empty")
     print()
 
     gen_registered_mcp_tools(registry)
