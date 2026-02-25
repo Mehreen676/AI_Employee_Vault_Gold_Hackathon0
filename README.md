@@ -2,6 +2,12 @@
 
 > Hackathon 0 | Personal AI Employee with full cross-domain autonomy
 
+![Gold Tier](https://img.shields.io/badge/Tier-Gold-FFD700?style=flat-square&logo=star&logoColor=white)
+![Cloud](https://img.shields.io/badge/Cloud-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)
+![HITL](https://img.shields.io/badge/HITL-Enabled-FF6B35?style=flat-square&logo=shield&logoColor=white)
+![MCP](https://img.shields.io/badge/MCP-4%20Servers-10B981?style=flat-square&logo=server&logoColor=white)
+![Audit](https://img.shields.io/badge/Audit-JSON%20%2B%20Neon%20DB-6366F1?style=flat-square&logo=database&logoColor=white)
+
 ## What Is This?
 
 A fully autonomous AI Employee that processes tasks from email or manual input, classifies them across **Personal** and **Business** domains, summarizes them with OpenAI, and loops until everything is done — then generates a **Weekly CEO Briefing**.
@@ -55,6 +61,42 @@ Gmail / Manual Input
                      |
                [Briefings/]
 ```
+
+---
+
+## Architecture Visual
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                     INPUT LAYER                              │
+│   Gmail (OAuth) ──┐                                         │
+│   Manual Drop  ───┴──► [Inbox/] ──► inbox_watcher.py        │
+└────────────────────────────────┬─────────────────────────────┘
+                                 │
+                                 ▼
+┌──────────────────────────────────────────────────────────────┐
+│              GOLD AGENT  (Ralph Wiggum Loop)                 │
+│                                                             │
+│  [Needs_Action/] ──► MCP Layer ──► HITL Gate               │
+│                      │               │                      │
+│   mcp_file_ops        │    sensitive ─► [Pending_Approval/] │
+│   mcp_email_ops       │               ─► human review       │
+│   mcp_calendar_ops    │    safe ──► OpenAI summarize        │
+│   mcp_audit_ops       │         ──► domain_router           │
+│   + stubs             │         ──► [Personal/][Business/]  │
+└───────────────────────┼──────────────────────────────────────┘
+                        │
+                        ▼
+┌──────────────────────────────────────────────────────────────┐
+│                    OUTPUT LAYER                              │
+│  [Done/] ──► ceo_briefing.py ──► [Briefings/]              │
+│           ──► audit_logger.py ──► [Logs/] ──► Neon DB       │
+│           ──► Evidence/  (MCP_HEALTH_REPORT.json, etc.)     │
+└──────────────────────────────────────────────────────────────┘
+```
+
+> Full Mermaid diagram: [`Evidence/ARCH_DIAGRAM.md`](Evidence/ARCH_DIAGRAM.md)
+> ASCII diagram:        [`Evidence/ARCH_DIAGRAM.txt`](Evidence/ARCH_DIAGRAM.txt)
 
 ---
 
@@ -170,6 +212,19 @@ py gold_agent.py
 > See [`docs/GMAIL_WATCHER_SETUP.md`](docs/GMAIL_WATCHER_SETUP.md) for the full setup guide.
 
 ---
+
+### 5b. Diagnostic Tools
+
+```bash
+# MCP Health Report — registered tools, DRY_RUN status, last log timestamp
+python tools/mcp_health_report.py
+# Writes: Evidence/MCP_HEALTH_REPORT.json
+
+# Architecture Diagrams — ASCII + Mermaid
+python tools/generate_architecture_diagram.py
+# Writes: Evidence/ARCH_DIAGRAM.txt
+#         Evidence/ARCH_DIAGRAM.md
+```
 
 ### 6. Check Results
 

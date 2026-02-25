@@ -1,0 +1,93 @@
+{
+  "generated": "2026-02-25T08:24:36Z",
+  "mcp_dry_run": "true (default \u2014 not explicitly set)",
+  "registered_tools": {
+    "total": 24,
+    "tools": {
+      "email_send": "email_mcp_stub",
+      "notify_external": "email_mcp_stub",
+      "send_email": "gmail_mcp_server",
+      "browser_action": "browser_mcp_stub",
+      "browser_navigate_click": "browser_mcp_stub",
+      "authorize": "browser_mcp_stub",
+      "publish": "browser_mcp_stub",
+      "deploy": "browser_mcp_stub",
+      "delete": "browser_mcp_stub",
+      "payment": "browser_mcp_stub",
+      "create_calendar_event": "calendar_mcp_stub",
+      "draft_email": "gmail_mcp_server",
+      "search_email": "gmail_mcp_server",
+      "open_url": "playwright_browser_server",
+      "click_selector": "playwright_browser_server",
+      "type_text": "playwright_browser_server",
+      "screenshot": "playwright_browser_server",
+      "odoo_create_partner": "odoo_mcp_stub",
+      "odoo_create_invoice": "odoo_mcp_stub",
+      "odoo_list_invoices": "odoo_mcp_stub",
+      "social_post_facebook": "social_mcp_stub",
+      "social_post_instagram": "social_mcp_stub",
+      "social_post_twitter": "social_mcp_stub",
+      "social_get_analytics": "social_mcp_stub"
+    },
+    "by_server": {
+      "email_mcp_stub": [
+        "email_send",
+        "notify_external"
+      ],
+      "gmail_mcp_server": [
+        "send_email",
+        "draft_email",
+        "search_email"
+      ],
+      "browser_mcp_stub": [
+        "browser_action",
+        "browser_navigate_click",
+        "authorize",
+        "publish",
+        "deploy",
+        "delete",
+        "payment"
+      ],
+      "calendar_mcp_stub": [
+        "create_calendar_event"
+      ],
+      "playwright_browser_server": [
+        "open_url",
+        "click_selector",
+        "type_text",
+        "screenshot"
+      ],
+      "odoo_mcp_stub": [
+        "odoo_create_partner",
+        "odoo_create_invoice",
+        "odoo_list_invoices"
+      ],
+      "social_mcp_stub": [
+        "social_post_facebook",
+        "social_post_instagram",
+        "social_post_twitter",
+        "social_get_analytics"
+      ]
+    }
+  },
+  "last_log_timestamp": "2026-02-25T07:56:33.691641+00:00",
+  "log_stats": {
+    "total_log_entries": 4361,
+    "entries_by_server": {
+      "mcp_file_ops": 2426,
+      "gold_agent": 701,
+      "mcp_audit_ops": 519,
+      "mcp_calendar_ops": 346,
+      "domain_router": 182,
+      "ceo_briefing": 173,
+      "mcp_router": 7,
+      "social_mcp_stub": 4,
+      "odoo_mcp_stub": 3
+    }
+  },
+  "health_status": "OK",
+  "source": {
+    "registry_file": "Evidence\\REGISTERED_MCP_TOOLS.json",
+    "logs_dir": "Logs"
+  }
+}

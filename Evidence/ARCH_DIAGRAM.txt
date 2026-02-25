@@ -1,0 +1,78 @@
+
+╔══════════════════════════════════════════════════════════════╗
+║          AI Employee Vault — Gold Tier Architecture          ║
+╚══════════════════════════════════════════════════════════════╝
+
+  ┌─────────────────────────────────────────────────────────┐
+  │           INPUT LAYER                                   │
+  │                                                         │
+  │   Gmail (OAuth)          Manual Drop                    │
+  │        │                      │                         │
+  │        └──────────┬───────────┘                         │
+  │                   │                                     │
+  │            [Inbox/ folder]                              │
+  │                   │                                     │
+  │          inbox_watcher.py                               │
+  │       (adds YAML frontmatter)                           │
+  └───────────────────┼─────────────────────────────────────┘
+                      │
+                      ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │           GOLD AGENT  (gold_agent.py)                   │
+  │           Ralph Wiggum Autonomous Loop                  │
+  │                                                         │
+  │   [Needs_Action/]  ◄──── stage_inbox()                  │
+  │         │                                               │
+  │         ▼                                               │
+  │   ┌─────────────────────────────────────────────┐       │
+  │   │            MCP LAYER                        │       │
+  │   │                                             │       │
+  │   │  mcp_file_ops     — CRUD vault files        │       │
+  │   │  mcp_email_ops    — classify / parse email  │       │
+  │   │  mcp_calendar_ops — schedule / priority     │       │
+  │   │  mcp_audit_ops    — compliance queries      │       │
+  │   │                                             │       │
+  │   │  + stubs: gmail · odoo · browser · social   │       │
+  │   └──────────────────┬──────────────────────────┘       │
+  │                      │                                  │
+  │                      ▼                                  │
+  │   ┌─────────────────────────────────────────────┐       │
+  │   │            HITL GATE  (hitl.py)             │       │
+  │   │                                             │       │
+  │   │  sensitive keyword? ──YES──►[Pending_Approval/]──►  │
+  │   │        │                      human review          │
+  │   │        NO                     approve / reject      │
+  │   │        │                            │               │
+  │   │        │◄───────────── approved ────┘               │
+  │   └────────┼────────────────────────────────────────────┘
+  │            │
+  │            ▼
+  │   classify → OpenAI summarize → domain_router.py
+  │         │               │
+  │   [Personal/]     [Business/]
+  │         │               │
+  │         └───────┬───────┘
+  │                 ▼
+  │            [Done/ folder]
+  └─────────────────┼───────────────────────────────────────┘
+                    │
+                    ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │           OUTPUT LAYER                                  │
+  │                                                         │
+  │   ceo_briefing.py  ──►  [Briefings/CEO_Briefing_*.md]  │
+  │   audit_logger.py  ──►  [Logs/*.json]                  │
+  │   vault_logger.py  ──►  [Logs/Runs/run_*.md]           │
+  │   Neon DB          ──►  agent_runs + events tables      │
+  │   Evidence/        ──►  MCP_HEALTH_REPORT.json +        │
+  │                         REGISTERED_MCP_TOOLS.json +     │
+  │                         ARCH_DIAGRAM.*                  │
+  └─────────────────────────────────────────────────────────┘
+
+Legend:
+  [Folder/]   = filesystem folder (vault)
+  module.py   = Python module
+  MCP LAYER   = Model Context Protocol servers (tools)
+  HITL GATE   = Human-in-the-Loop approval gate
+
+Generated: 2026-02-25T08:26:59Z
