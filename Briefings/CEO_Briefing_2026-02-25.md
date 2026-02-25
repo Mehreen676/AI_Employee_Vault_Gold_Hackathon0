@@ -1,6 +1,6 @@
 # Weekly CEO Briefing
 
-**Generated:** 2026-02-25 09:00 UTC
+**Generated:** 2026-02-25 10:09 UTC
 **Week:** 2026-02-23 to 2026-03-01 (ISO Week 9)
 **Day:** Wednesday
 
@@ -11,7 +11,7 @@
 - **Tasks Completed This Week:** 28
 - **Business Tasks Active:** 1
 - **Personal Tasks Active:** 1
-- **Total System Actions (7d):** 4355
+- **Total System Actions (7d):** 4335
 - **Errors (7d):** 5
 - **System Health:** DEGRADED
 
@@ -46,38 +46,35 @@
 
 | Action | Count |
 |--------|-------|
-| mcp_calendar_ops.get_current_week | 346 |
-| mcp_file_ops.list_tasks | 530 |
-| mcp_audit_ops.get_recent_actions | 344 |
-| domain_router.get_all_domain_tasks | 173 |
-| gold_agent.loop_complete | 173 |
-| gold_agent.agent_complete | 172 |
-| gold_agent.agent_start | 173 |
-| ceo_briefing.save_briefing | 172 |
-| mcp_file_ops.write_task | 177 |
-| mcp_audit_ops.get_action_summary | 172 |
-| gold_agent.loop_start | 173 |
-| gold_agent.openai_fallback | 2 |
-| mcp_file_ops.move_task | 3 |
-| domain_router.classify_task | 7 |
-| mcp_file_ops.read_task | 1715 |
-| gold_agent.task_completed | 2 |
-| domain_router.route_task | 2 |
+| gold_agent.loop_start | 172 |
+| gold_agent.agent_start | 172 |
+| mcp_file_ops.list_tasks | 526 |
+| mcp_calendar_ops.get_current_week | 344 |
+| gold_agent.loop_complete | 172 |
+| mcp_audit_ops.get_recent_actions | 342 |
+| mcp_audit_ops.get_action_summary | 171 |
+| domain_router.get_all_domain_tasks | 172 |
+| mcp_file_ops.read_task | 1713 |
+| ceo_briefing.save_briefing | 171 |
+| mcp_file_ops.write_task | 172 |
+| gold_agent.agent_complete | 171 |
 | gold_agent.openai_config_missing | 1 |
-| social_mcp_stub.social_post_facebook_dry_run | 1 |
-| mcp_router.dispatch_ok.odoo_list_invoices | 1 |
-| odoo_mcp_stub.odoo_create_invoice_dry_run | 1 |
-| mcp_router.dispatch_ok.odoo_create_partner | 1 |
-| social_mcp_stub.social_post_twitter_dry_run | 1 |
-| odoo_mcp_stub.odoo_create_partner_dry_run | 1 |
-| mcp_router.dispatch_ok.social_get_analytics | 1 |
-| mcp_router.dispatch_ok.social_post_instagram | 1 |
-| social_mcp_stub.social_get_analytics_simulated | 1 |
-| mcp_router.dispatch_ok.odoo_create_invoice | 1 |
-| social_mcp_stub.social_post_instagram_dry_run | 1 |
-| mcp_router.dispatch_ok.social_post_facebook | 1 |
-| mcp_router.dispatch_ok.social_post_twitter | 1 |
-| odoo_mcp_stub.odoo_list_invoices_dry_run | 1 |
+| social_mcp_stub.social_post_facebook_dry_run | 2 |
+| mcp_router.dispatch_ok.odoo_list_invoices | 2 |
+| odoo_mcp_stub.odoo_create_invoice_dry_run | 2 |
+| mcp_router.dispatch_ok.odoo_create_partner | 2 |
+| social_mcp_stub.social_post_twitter_dry_run | 2 |
+| odoo_mcp_stub.odoo_create_partner_dry_run | 2 |
+| mcp_router.dispatch_ok.social_get_analytics | 2 |
+| mcp_router.dispatch_ok.social_post_instagram | 2 |
+| social_mcp_stub.social_get_analytics_simulated | 2 |
+| mcp_router.dispatch_ok.odoo_create_invoice | 2 |
+| social_mcp_stub.social_post_instagram_dry_run | 2 |
+| mcp_router.dispatch_ok.social_post_facebook | 2 |
+| mcp_router.dispatch_ok.social_post_twitter | 2 |
+| odoo_mcp_stub.odoo_list_invoices_dry_run | 2 |
+| domain_router.classify_task | 3 |
+| mcp_file_ops.move_task | 1 |
 | gold_agent.task_error | 3 |
 | gold_agent.max_retries_reached | 1 |
 
