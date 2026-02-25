@@ -1,0 +1,252 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 720" width="900" height="720" font-family="'Segoe UI', system-ui, sans-serif">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="inputGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="agentGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b45309"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="mcpGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#15803d"/>
+      <stop offset="100%" stop-color="#16a34a"/>
+    </linearGradient>
+    <linearGradient id="hitlGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#b91c1c"/>
+      <stop offset="100%" stop-color="#dc2626"/>
+    </linearGradient>
+    <linearGradient id="outGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#9333ea"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.5"/>
+    </filter>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#60a5fa"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#f87171"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#4ade80"/>
+    </marker>
+    <marker id="arrowPurple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#c084fc"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="720" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- Title -->
+  <text x="450" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#f1f5f9" letter-spacing="1">AI Employee Vault — Gold Tier Architecture</text>
+  <text x="450" y="56" text-anchor="middle" font-size="12" fill="#64748b">Hackathon 0 · Autonomous AI Employee · Ralph Wiggum Loop</text>
+
+  <!-- ═══════════════ INPUT LAYER ═══════════════ -->
+  <rect x="20" y="72" width="860" height="100" rx="10" fill="url(#inputGrad)" opacity="0.18" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="36" y="92" font-size="11" font-weight="700" fill="#93c5fd" letter-spacing="2">INPUT LAYER</text>
+
+  <!-- Gmail node -->
+  <rect x="60" y="102" width="130" height="46" rx="8" fill="#1e40af" stroke="#60a5fa" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="125" y="121" text-anchor="middle" font-size="12" font-weight="600" fill="#eff6ff">📧 Gmail</text>
+  <text x="125" y="137" text-anchor="middle" font-size="10" fill="#93c5fd">OAuth2 Watcher</text>
+
+  <!-- Manual node -->
+  <rect x="220" y="102" width="130" height="46" rx="8" fill="#1e40af" stroke="#60a5fa" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="285" y="121" text-anchor="middle" font-size="12" font-weight="600" fill="#eff6ff">📄 Manual Drop</text>
+  <text x="285" y="137" text-anchor="middle" font-size="10" fill="#93c5fd">Inbox/ folder</text>
+
+  <!-- Inbox node -->
+  <rect x="390" y="102" width="140" height="46" rx="8" fill="#1d4ed8" stroke="#93c5fd" stroke-width="2" filter="url(#shadow)"/>
+  <text x="460" y="121" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">📥 Inbox/</text>
+  <text x="460" y="137" text-anchor="middle" font-size="10" fill="#bfdbfe">inbox_watcher.py</text>
+
+  <!-- Needs_Action node -->
+  <rect x="570" y="102" width="150" height="46" rx="8" fill="#1d4ed8" stroke="#93c5fd" stroke-width="2" filter="url(#shadow)"/>
+  <text x="645" y="121" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">⚙️ Needs_Action/</text>
+  <text x="645" y="137" text-anchor="middle" font-size="10" fill="#bfdbfe">stage_inbox() flush</text>
+
+  <!-- Input arrows -->
+  <line x1="190" y1="125" x2="388" y2="125" stroke="#60a5fa" stroke-width="1.5" marker-end="url(#arrowBlue)" stroke-dasharray="5,3"/>
+  <line x1="350" y1="125" x2="388" y2="125" stroke="#60a5fa" stroke-width="1.5"/>
+  <line x1="530" y1="125" x2="568" y2="125" stroke="#60a5fa" stroke-width="2" marker-end="url(#arrowBlue)"/>
+
+  <!-- ═══════════════ GOLD AGENT ═══════════════ -->
+  <rect x="20" y="192" width="530" height="230" rx="10" fill="url(#agentGrad)" opacity="0.12" stroke="#d97706" stroke-width="1.5"/>
+  <text x="36" y="212" font-size="11" font-weight="700" fill="#fcd34d" letter-spacing="2">GOLD AGENT  •  gold_agent.py  •  Ralph Wiggum Loop</text>
+
+  <!-- MCP Servers box -->
+  <rect x="36" y="220" width="240" height="190" rx="8" fill="url(#mcpGrad)" opacity="0.2" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="156" y="238" text-anchor="middle" font-size="11" font-weight="700" fill="#86efac" letter-spacing="1">MCP LAYER  (4 servers)</text>
+
+  <rect x="48" y="244" width="216" height="28" rx="5" fill="#14532d" stroke="#22c55e" stroke-width="1"/>
+  <text x="156" y="262" text-anchor="middle" font-size="11" fill="#bbf7d0">mcp_file_ops — CRUD vault files</text>
+
+  <rect x="48" y="278" width="216" height="28" rx="5" fill="#14532d" stroke="#22c55e" stroke-width="1"/>
+  <text x="156" y="296" text-anchor="middle" font-size="11" fill="#bbf7d0">mcp_email_ops — classify email</text>
+
+  <rect x="48" y="312" width="216" height="28" rx="5" fill="#14532d" stroke="#22c55e" stroke-width="1"/>
+  <text x="156" y="330" text-anchor="middle" font-size="11" fill="#bbf7d0">mcp_calendar_ops — schedule</text>
+
+  <rect x="48" y="346" width="216" height="28" rx="5" fill="#14532d" stroke="#22c55e" stroke-width="1"/>
+  <text x="156" y="364" text-anchor="middle" font-size="11" fill="#bbf7d0">mcp_audit_ops — compliance</text>
+
+  <rect x="48" y="380" width="216" height="22" rx="5" fill="#052e16" stroke="#15803d" stroke-width="1" stroke-dasharray="4,2"/>
+  <text x="156" y="395" text-anchor="middle" font-size="10" fill="#86efac">+ stubs: gmail · odoo · browser · social</text>
+
+  <!-- HITL Gate box -->
+  <rect x="296" y="220" width="240" height="190" rx="8" fill="url(#hitlGrad)" opacity="0.18" stroke="#f87171" stroke-width="1.5"/>
+  <text x="416" y="238" text-anchor="middle" font-size="11" font-weight="700" fill="#fca5a5" letter-spacing="1">HITL GATE  •  hitl.py</text>
+
+  <!-- Sensitive path -->
+  <rect x="308" y="248" width="216" height="36" rx="5" fill="#450a0a" stroke="#ef4444" stroke-width="1.2"/>
+  <text x="416" y="264" text-anchor="middle" font-size="11" font-weight="600" fill="#fecaca">🔴 Sensitive keyword?</text>
+  <text x="416" y="278" text-anchor="middle" font-size="10" fill="#f87171">email_send · payment · deploy · delete</text>
+
+  <line x1="416" y1="285" x2="416" y2="304" stroke="#f87171" stroke-width="1.5" marker-end="url(#arrowRed)"/>
+
+  <rect x="308" y="306" width="216" height="26" rx="5" fill="#7f1d1d" stroke="#ef4444" stroke-width="1"/>
+  <text x="416" y="323" text-anchor="middle" font-size="11" fill="#fecaca">⏳ Pending_Approval/</text>
+
+  <line x1="416" y1="333" x2="416" y2="350" stroke="#f87171" stroke-width="1.5" marker-end="url(#arrowRed)"/>
+
+  <rect x="308" y="352" width="216" height="26" rx="5" fill="#7f1d1d" stroke="#f59e0b" stroke-width="1"/>
+  <text x="416" y="369" text-anchor="middle" font-size="11" fill="#fde68a">👤 Human Review  (approve.py)</text>
+
+  <!-- Safe path label -->
+  <rect x="308" y="385" width="216" height="20" rx="4" fill="#052e16" stroke="#4ade80" stroke-width="1"/>
+  <text x="416" y="399" text-anchor="middle" font-size="10" fill="#86efac">✅ Safe → OpenAI summarize → domain_router</text>
+
+  <!-- Arrow MCP → HITL -->
+  <line x1="264" y1="315" x2="294" y2="315" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Arrow agent down to processing -->
+  <line x1="285" y1="422" x2="285" y2="460" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- ═══════════════ PROCESSING ROW ═══════════════ -->
+  <rect x="20" y="438" width="860" height="68" rx="10" fill="#1e293b" stroke="#475569" stroke-width="1" opacity="0.9"/>
+  <text x="36" y="458" font-size="11" font-weight="700" fill="#94a3b8" letter-spacing="2">PROCESSING</text>
+
+  <!-- classify -->
+  <rect x="60" y="464" width="110" height="32" rx="6" fill="#0f4c75" stroke="#60a5fa" stroke-width="1.2"/>
+  <text x="115" y="484" text-anchor="middle" font-size="11" fill="#bfdbfe">classify</text>
+
+  <line x1="170" y1="480" x2="192" y2="480" stroke="#60a5fa" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- OpenAI -->
+  <rect x="194" y="464" width="130" height="32" rx="6" fill="#0c4a6e" stroke="#38bdf8" stroke-width="1.2"/>
+  <text x="259" y="484" text-anchor="middle" font-size="11" fill="#bae6fd">OpenAI summarize</text>
+
+  <line x1="324" y1="480" x2="346" y2="480" stroke="#60a5fa" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- domain_router -->
+  <rect x="348" y="464" width="140" height="32" rx="6" fill="#312e81" stroke="#818cf8" stroke-width="1.2"/>
+  <text x="418" y="484" text-anchor="middle" font-size="11" fill="#c7d2fe">domain_router.py</text>
+
+  <line x1="488" y1="480" x2="510" y2="480" stroke="#818cf8" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- Personal / Business -->
+  <rect x="512" y="461" width="100" height="18" rx="5" fill="#1e3a5f" stroke="#60a5fa" stroke-width="1"/>
+  <text x="562" y="474" text-anchor="middle" font-size="10" fill="#93c5fd">🏠 Personal/</text>
+  <rect x="512" y="482" width="100" height="18" rx="5" fill="#1e3a5f" stroke="#60a5fa" stroke-width="1"/>
+  <text x="562" y="495" text-anchor="middle" font-size="10" fill="#93c5fd">💼 Business/</text>
+
+  <line x1="612" y1="475" x2="634" y2="480" stroke="#60a5fa" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+  <line x1="612" y1="491" x2="634" y2="483" stroke="#60a5fa" stroke-width="1.5"/>
+
+  <!-- Done -->
+  <rect x="636" y="464" width="100" height="32" rx="6" fill="#14532d" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="686" y="484" text-anchor="middle" font-size="12" font-weight="700" fill="#bbf7d0">✅ Done/</text>
+
+  <line x1="736" y1="480" x2="758" y2="480" stroke="#4ade80" stroke-width="1.5" marker-end="url(#arrowGreen)"/>
+
+  <!-- CEO Briefing inline -->
+  <rect x="760" y="464" width="110" height="32" rx="6" fill="#4c1d95" stroke="#c084fc" stroke-width="1.5"/>
+  <text x="815" y="478" text-anchor="middle" font-size="10" font-weight="600" fill="#e9d5ff">ceo_briefing.py</text>
+  <text x="815" y="491" text-anchor="middle" font-size="10" fill="#d8b4fe">Briefings/</text>
+
+  <!-- agent down arrow to processing row -->
+  <line x1="156" y1="422" x2="100" y2="460" stroke="#d97706" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="4,3"/>
+
+  <!-- Needs_Action → Agent -->
+  <line x1="645" y1="148" x2="645" y2="192" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="645" y1="192" x2="156" y2="225" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)" stroke-dasharray="5,3"/>
+
+  <!-- ═══════════════ OUTPUT LAYER ═══════════════ -->
+  <rect x="20" y="528" width="860" height="170" rx="10" fill="url(#outGrad)" opacity="0.1" stroke="#9333ea" stroke-width="1.5"/>
+  <text x="36" y="548" font-size="11" font-weight="700" fill="#c084fc" letter-spacing="2">OUTPUT LAYER</text>
+
+  <!-- Briefings -->
+  <rect x="40" y="558" width="160" height="58" rx="8" fill="#2e1065" stroke="#c084fc" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="120" y="578" text-anchor="middle" font-size="13">📊</text>
+  <text x="120" y="594" text-anchor="middle" font-size="11" font-weight="600" fill="#e9d5ff">Briefings/</text>
+  <text x="120" y="608" text-anchor="middle" font-size="10" fill="#d8b4fe">CEO_Briefing_*.md</text>
+
+  <!-- Logs -->
+  <rect x="220" y="558" width="160" height="58" rx="8" fill="#1e1b4b" stroke="#818cf8" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="300" y="578" text-anchor="middle" font-size="13">🗂️</text>
+  <text x="300" y="594" text-anchor="middle" font-size="11" font-weight="600" fill="#c7d2fe">Logs/</text>
+  <text x="300" y="608" text-anchor="middle" font-size="10" fill="#a5b4fc">JSON per-action audit trail</text>
+
+  <!-- Neon DB -->
+  <rect x="400" y="558" width="160" height="58" rx="8" fill="#0c1445" stroke="#60a5fa" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="480" y="578" text-anchor="middle" font-size="13">🐘</text>
+  <text x="480" y="594" text-anchor="middle" font-size="11" font-weight="600" fill="#bfdbfe">Neon Postgres</text>
+  <text x="480" y="608" text-anchor="middle" font-size="10" fill="#93c5fd">agent_runs · events</text>
+
+  <!-- Evidence -->
+  <rect x="580" y="558" width="160" height="58" rx="8" fill="#1a1a2e" stroke="#f59e0b" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="660" y="578" text-anchor="middle" font-size="13">📋</text>
+  <text x="660" y="594" text-anchor="middle" font-size="11" font-weight="600" fill="#fde68a">Evidence/</text>
+  <text x="660" y="608" text-anchor="middle" font-size="10" fill="#fcd34d">MCP_HEALTH_REPORT.json</text>
+
+  <!-- Runs/Timeline -->
+  <rect x="760" y="558" width="100" height="58" rx="8" fill="#1c1917" stroke="#78716c" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="810" y="578" text-anchor="middle" font-size="13">📈</text>
+  <text x="810" y="594" text-anchor="middle" font-size="11" font-weight="600" fill="#e7e5e4">Logs/Runs/</text>
+  <text x="810" y="608" text-anchor="middle" font-size="10" fill="#d6d3d1">run_*.md</text>
+
+  <!-- Output arrows from Done/CEO Briefing down -->
+  <line x1="815" y1="496" x2="815" y2="556" stroke="#c084fc" stroke-width="1.5" marker-end="url(#arrowPurple)"/>
+  <line x1="686" y1="496" x2="686" y2="528" stroke="#4ade80" stroke-width="1.5"/>
+  <line x1="686" y1="528" x2="120" y2="556" stroke="#4ade80" stroke-width="1" marker-end="url(#arrowGreen)"/>
+  <line x1="686" y1="528" x2="300" y2="556" stroke="#818cf8" stroke-width="1" marker-end="url(#arrowPurple)"/>
+  <line x1="686" y1="528" x2="480" y2="556" stroke="#60a5fa" stroke-width="1" marker-end="url(#arrowBlue)"/>
+  <line x1="686" y1="528" x2="660" y2="556" stroke="#f59e0b" stroke-width="1" marker-end="url(#arrow)"/>
+  <line x1="686" y1="528" x2="810" y2="556" stroke="#78716c" stroke-width="1" marker-end="url(#arrow)"/>
+
+  <!-- ═══════════════ LEGEND ═══════════════ -->
+  <rect x="20" y="640" width="860" height="62" rx="8" fill="#0f172a" stroke="#334155" stroke-width="1"/>
+  <text x="36" y="658" font-size="10" font-weight="700" fill="#64748b" letter-spacing="2">LEGEND</text>
+
+  <rect x="90" y="648" width="12" height="12" rx="2" fill="#1d4ed8" stroke="#60a5fa" stroke-width="1"/>
+  <text x="108" y="659" font-size="10" fill="#93c5fd">Input / Folders</text>
+
+  <rect x="220" y="648" width="12" height="12" rx="2" fill="#92400e" stroke="#d97706" stroke-width="1"/>
+  <text x="238" y="659" font-size="10" fill="#fcd34d">Gold Agent</text>
+
+  <rect x="340" y="648" width="12" height="12" rx="2" fill="#14532d" stroke="#4ade80" stroke-width="1"/>
+  <text x="358" y="659" font-size="10" fill="#86efac">MCP Servers</text>
+
+  <rect x="460" y="648" width="12" height="12" rx="2" fill="#7f1d1d" stroke="#ef4444" stroke-width="1"/>
+  <text x="478" y="659" font-size="10" fill="#fca5a5">HITL Gate</text>
+
+  <rect x="570" y="648" width="12" height="12" rx="2" fill="#2e1065" stroke="#c084fc" stroke-width="1"/>
+  <text x="588" y="659" font-size="10" fill="#e9d5ff">Output / Storage</text>
+
+  <text x="36" y="693" font-size="10" fill="#475569">Flow:  Gmail / Manual Input  →  Inbox/  →  inbox_watcher  →  Needs_Action/  →  Gold Agent  →  MCP Layer  →  HITL Gate  →  Done/  →  CEO Briefing  →  Briefings/</text>
+  <text x="36" y="706" font-size="10" fill="#475569">Sensitive path:  HITL detects keywords  →  Pending_Approval/  →  Human reviews with approve.py  →  Approved/ or Rejected/  →  Agent resumes</text>
+</svg>

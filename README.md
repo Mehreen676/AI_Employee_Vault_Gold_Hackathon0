@@ -2,11 +2,15 @@
 
 > Hackathon 0 | Personal AI Employee with full cross-domain autonomy
 
-![Gold Tier](https://img.shields.io/badge/Tier-Gold-FFD700?style=flat-square&logo=star&logoColor=white)
-![Cloud](https://img.shields.io/badge/Cloud-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white)
-![HITL](https://img.shields.io/badge/HITL-Enabled-FF6B35?style=flat-square&logo=shield&logoColor=white)
-![MCP](https://img.shields.io/badge/MCP-4%20Servers-10B981?style=flat-square&logo=server&logoColor=white)
-![Audit](https://img.shields.io/badge/Audit-JSON%20%2B%20Neon%20DB-6366F1?style=flat-square&logo=database&logoColor=white)
+<p align="center">
+  <img src="https://img.shields.io/badge/Tier-Gold%20%F0%9F%A5%87-FFD700?style=flat-square&logoColor=white" alt="Gold Tier"/>
+  <img src="https://img.shields.io/badge/Cloud-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white" alt="Cloud"/>
+  <img src="https://img.shields.io/badge/HITL-Enabled-FF6B35?style=flat-square&logo=shield&logoColor=white" alt="HITL"/>
+  <img src="https://img.shields.io/badge/MCP-4%20Servers-10B981?style=flat-square&logo=server&logoColor=white" alt="MCP"/>
+  <img src="https://img.shields.io/badge/Audit-JSON%20%2B%20Neon%20DB-6366F1?style=flat-square&logo=postgresql&logoColor=white" alt="Audit"/>
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python"/>
+  <img src="https://img.shields.io/badge/License-MIT-22c55e?style=flat-square" alt="License"/>
+</p>
 
 ## What Is This?
 
@@ -64,39 +68,13 @@ Gmail / Manual Input
 
 ---
 
-## Architecture Visual
+## Architecture (Visual)
 
-```
-┌──────────────────────────────────────────────────────────────┐
-│                     INPUT LAYER                              │
-│   Gmail (OAuth) ──┐                                         │
-│   Manual Drop  ───┴──► [Inbox/] ──► inbox_watcher.py        │
-└────────────────────────────────┬─────────────────────────────┘
-                                 │
-                                 ▼
-┌──────────────────────────────────────────────────────────────┐
-│              GOLD AGENT  (Ralph Wiggum Loop)                 │
-│                                                             │
-│  [Needs_Action/] ──► MCP Layer ──► HITL Gate               │
-│                      │               │                      │
-│   mcp_file_ops        │    sensitive ─► [Pending_Approval/] │
-│   mcp_email_ops       │               ─► human review       │
-│   mcp_calendar_ops    │    safe ──► OpenAI summarize        │
-│   mcp_audit_ops       │         ──► domain_router           │
-│   + stubs             │         ──► [Personal/][Business/]  │
-└───────────────────────┼──────────────────────────────────────┘
-                        │
-                        ▼
-┌──────────────────────────────────────────────────────────────┐
-│                    OUTPUT LAYER                              │
-│  [Done/] ──► ceo_briefing.py ──► [Briefings/]              │
-│           ──► audit_logger.py ──► [Logs/] ──► Neon DB       │
-│           ──► Evidence/  (MCP_HEALTH_REPORT.json, etc.)     │
-└──────────────────────────────────────────────────────────────┘
-```
+<p align="center">
+  <img src="docs/architecture.svg" alt="Gold Tier Architecture" width="900"/>
+</p>
 
-> Full Mermaid diagram: [`Evidence/ARCH_DIAGRAM.md`](Evidence/ARCH_DIAGRAM.md)
-> ASCII diagram:        [`Evidence/ARCH_DIAGRAM.txt`](Evidence/ARCH_DIAGRAM.txt)
+> Full Mermaid diagram: [`Evidence/ARCH_DIAGRAM.md`](Evidence/ARCH_DIAGRAM.md) &nbsp;|&nbsp; ASCII: [`Evidence/ARCH_DIAGRAM.txt`](Evidence/ARCH_DIAGRAM.txt)
 
 ---
 
