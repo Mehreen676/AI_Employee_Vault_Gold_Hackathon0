@@ -1,6 +1,6 @@
 # Evidence Pack — AI Employee Vault Gold Tier
 
-Generated: 2026-02-25T05:05:39Z
+Generated: 2026-02-25T09:05:09Z
 
 This folder contains judge-ready proof for every Gold Tier claim.
 
@@ -30,9 +30,19 @@ ls Logs/  # JSON audit log written
 | `README.md` | This index |
 | `PROOF_CHECKLIST.md` | All claims mapped to source files + Social MCP section |
 | `REGISTERED_MCP_TOOLS.json` | Live dump — 24 tools from `mcp.registry.list_registered()` |
-| `LAST_RUN_SUMMARY.json` | Latest run: run_id=178, db_events=24 |
+| `LAST_RUN_SUMMARY.json` | Latest run: run_id=181, db_events=24 |
 | `ODOO_DEMO.md` | Dry-run proof for 3 Odoo MCP tools |
 | `SOCIAL_DEMO.md` | Dry-run proof for 4 Social MCP tools (safety gate demo) |
+
+---
+
+## Dead-Letter Queue
+
+| `Failed_Tasks/` | Dead-letter queue empty — all tasks processed successfully |
+
+Failed tasks are preserved in `Failed_Tasks/` for review and reprocessing.
+The agent uses `@with_retry` (exponential backoff, 3 attempts) before a task
+is declared failed and moved to the dead-letter queue.
 
 ---
 

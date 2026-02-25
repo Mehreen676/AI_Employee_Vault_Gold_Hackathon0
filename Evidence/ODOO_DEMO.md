@@ -1,6 +1,6 @@
 # Odoo MCP Stub — Dry-Run Proof
 
-Generated: 2026-02-25T05:05:39Z
+Generated: 2026-02-25T09:05:09Z
 Source:    mcp/odoo_mcp_stub.py
 Server:    odoo_mcp_stub
 DRY_RUN:   true (default)
@@ -23,7 +23,7 @@ Return value:
   "dry_run": true,
   "result": "dry_run_logged",
   "message": "[DRY RUN] Would list Odoo invoices: limit=5, state='', move_types=['out_invoice', 'in_invoice']",
-  "timestamp": "2026-02-25T05:05:39.099230+00:00",
+  "timestamp": "2026-02-25T09:05:09.223438+00:00",
   "intent": {
     "limit": 5,
     "state": "",
@@ -53,7 +53,7 @@ Return value:
   "dry_run": true,
   "result": "dry_run_logged",
   "message": "[DRY RUN] Would create Odoo partner: name='Demo Contact', email='demo@example.com'",
-  "timestamp": "2026-02-25T05:05:39.101616+00:00",
+  "timestamp": "2026-02-25T09:05:09.226780+00:00",
   "intent": {
     "name": "Demo Contact",
     "email": "demo@example.com",
@@ -81,7 +81,7 @@ Return value:
   "dry_run": true,
   "result": "dry_run_logged",
   "message": "[DRY RUN] Would create Odoo invoice: partner_id=42, lines=1, total=500.0 USD",
-  "timestamp": "2026-02-25T05:05:39.103947+00:00",
+  "timestamp": "2026-02-25T09:05:09.229409+00:00",
   "intent": {
     "partner_id": 42,
     "lines_count": 1,

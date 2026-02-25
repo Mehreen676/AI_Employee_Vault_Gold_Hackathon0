@@ -1,6 +1,6 @@
 # Social MCP Stub — Dry-Run Proof
 
-Generated: 2026-02-25T05:05:39Z
+Generated: 2026-02-25T09:05:09Z
 Source:    mcp/social_mcp_stub.py
 Server:    social_mcp_stub
 DRY_RUN:   true (default)
@@ -29,7 +29,7 @@ Console output:
   [social_mcp_stub] DRY RUN: Would post to Facebook Page
   [social_mcp_stub]   Page:    @AIEmployeeVault
   [social_mcp_stub]   Content: Exciting news! AI Employee Vault Gold is now live. #AIEmployee #Automation...
-  [social_mcp_stub]   Sim ID:  fb_23943321449_simulated
+  [social_mcp_stub]   Sim ID:  fb_29670191165_simulated
   [social_mcp_stub]   -> social_safety_gate: live posting permanently blocked.
 
 Return value:
@@ -39,8 +39,8 @@ Return value:
   "dry_run": true,
   "result": "dry_run_logged",
   "message": "[DRY RUN] Would post to Facebook Page '@AIEmployeeVault' \u2014 task: 'facebook_post_demo.md'",
-  "simulated_post_id": "fb_23943321449_simulated",
-  "timestamp": "2026-02-25T05:05:39.106737+00:00",
+  "simulated_post_id": "fb_29670191165_simulated",
+  "timestamp": "2026-02-25T09:05:09.233780+00:00",
   "intent": {
     "platform": "facebook",
     "page": "@AIEmployeeVault",
@@ -57,7 +57,7 @@ Console output:
   [social_mcp_stub] DRY RUN: Would post to Instagram
   [social_mcp_stub]   Account: @AIEmployeeVault
   [social_mcp_stub]   Caption: Behind the scenes at AI Employee Vault. #AI #Productivity...
-  [social_mcp_stub]   Sim ID:  ig_72019794045_simulated
+  [social_mcp_stub]   Sim ID:  ig_71732280908_simulated
   [social_mcp_stub]   -> social_safety_gate: live posting permanently blocked.
 
 Return value:
@@ -67,8 +67,8 @@ Return value:
   "dry_run": true,
   "result": "dry_run_logged",
   "message": "[DRY RUN] Would post to Instagram account '@AIEmployeeVault' \u2014 task: 'instagram_post_demo.md'",
-  "simulated_post_id": "ig_72019794045_simulated",
-  "timestamp": "2026-02-25T05:05:39.108971+00:00",
+  "simulated_post_id": "ig_71732280908_simulated",
+  "timestamp": "2026-02-25T09:05:09.236632+00:00",
   "intent": {
     "platform": "instagram",
     "account": "@AIEmployeeVault",
@@ -85,7 +85,7 @@ Console output:
   [social_mcp_stub] DRY RUN: Would post to Twitter/X
   [social_mcp_stub]   Account: @AIEmployeeVault
   [social_mcp_stub]   Text:    Exciting news from our Q1 launch! #GoldTier #AI...
-  [social_mcp_stub]   Sim ID:  tw_96968386844_simulated
+  [social_mcp_stub]   Sim ID:  tw_79504853697_simulated
   [social_mcp_stub]   -> social_safety_gate: live posting permanently blocked.
 
 Return value:
@@ -95,8 +95,8 @@ Return value:
   "dry_run": true,
   "result": "dry_run_logged",
   "message": "[DRY RUN] Would tweet from '@AIEmployeeVault' \u2014 task: 'twitter_post_demo.md'",
-  "simulated_post_id": "tw_96968386844_simulated",
-  "timestamp": "2026-02-25T05:05:39.111658+00:00",
+  "simulated_post_id": "tw_79504853697_simulated",
+  "timestamp": "2026-02-25T09:05:09.238644+00:00",
   "intent": {
     "platform": "twitter",
     "account": "@AIEmployeeVault",
@@ -147,7 +147,7 @@ Return value:
     }
   },
   "period": "30d",
-  "timestamp": "2026-02-25T05:05:39.113698+00:00",
+  "timestamp": "2026-02-25T09:05:09.241172+00:00",
   "note": "All metrics are simulated cloud data \u2014 no real API call made."
 }
 

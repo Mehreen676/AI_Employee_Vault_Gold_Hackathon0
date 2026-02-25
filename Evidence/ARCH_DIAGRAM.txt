@@ -75,4 +75,4 @@ Legend:
   MCP LAYER   = Model Context Protocol servers (tools)
   HITL GATE   = Human-in-the-Loop approval gate
 
-Generated: 2026-02-25T08:26:59Z
+Generated: 2026-02-25T09:05:11Z

@@ -1,10 +1,13 @@
 {
-  "generated": "2026-02-25T05:05:39Z",
+  "generated": "2026-02-25T09:05:09Z",
   "source": "run_log.md",
-  "timestamp": "2026-02-25 04:45:20Z",
+  "timestamp": "2026-02-25 07:56:36Z",
   "loops": 1,
   "processed": 0,
   "failed": 0,
-  "run_id": 178,
-  "db_events": 24
+  "run_id": 181,
+  "db_events": 24,
+  "failed_tasks_queued": 0,
+  "failed_tasks_dir": "Failed_Tasks/",
+  "failed_tasks_note": "Dead-letter queue is empty \u2014 all tasks processed successfully."
 }

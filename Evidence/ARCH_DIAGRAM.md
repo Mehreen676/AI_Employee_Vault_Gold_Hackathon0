@@ -1,6 +1,6 @@
 # AI Employee Vault — Architecture Diagram
 
-> Generated: 2026-02-25T08:26:59Z
+> Generated: 2026-02-25T09:05:11Z
 
 ## System Flow
 

@@ -1,5 +1,5 @@
 {
-  "generated": "2026-02-25T08:24:36Z",
+  "generated": "2026-02-25T09:05:11Z",
   "mcp_dry_run": "true (default \u2014 not explicitly set)",
   "registered_tools": {
     "total": 24,
@@ -70,9 +70,9 @@
       ]
     }
   },
-  "last_log_timestamp": "2026-02-25T07:56:33.691641+00:00",
+  "last_log_timestamp": "2026-02-25T09:05:09.242835+00:00",
   "log_stats": {
-    "total_log_entries": 4361,
+    "total_log_entries": 4375,
     "entries_by_server": {
       "mcp_file_ops": 2426,
       "gold_agent": 701,
@@ -80,9 +80,9 @@
       "mcp_calendar_ops": 346,
       "domain_router": 182,
       "ceo_briefing": 173,
-      "mcp_router": 7,
-      "social_mcp_stub": 4,
-      "odoo_mcp_stub": 3
+      "mcp_router": 14,
+      "social_mcp_stub": 8,
+      "odoo_mcp_stub": 6
     }
   },
   "health_status": "OK",

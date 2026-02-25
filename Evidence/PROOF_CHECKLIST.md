@@ -1,6 +1,6 @@
 # Gold Tier — Proof Checklist
 
-Generated: 2026-02-25T05:05:39Z
+Generated: 2026-02-25T09:05:09Z
 
 This checklist maps every judge requirement to exact source file locations
 and live evidence files.
