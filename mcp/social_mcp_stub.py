@@ -1,26 +1,30 @@
 """
-mcp/social_mcp_stub.py — Meta Graph API v18 + Social MCP integration (Gold Tier).
+mcp/social_mcp_stub.py — Meta Graph API v18 + X API v2 + Social MCP (Gold Tier).
 
-Provides real Facebook Page and Instagram Business posting via the Meta Graph
-API v18.0 when MCP_DRY_RUN=false.  Twitter/X remains simulated (no credentials
-required).  All actions pass through the standard HITL approval flow before
+Provides real social media posting when MCP_DRY_RUN=false:
+    Facebook Page  — Meta Graph API v18.0
+    Instagram      — Meta Content Publishing API v18.0 (two-step)
+    Twitter/X      — X API v2  POST /2/tweets
+
+All actions pass through the standard HITL approval flow before
 dispatch_action() calls this stub.
 
 DRY_RUN=true  (default, controlled by MCP_DRY_RUN env var)
     Logs intent to audit_logger + Logs/<timestamp>.json.
-    No network calls to Meta Graph API.
+    No network calls to any platform API.
     Safe for CI, staging, and demo environments.
 
 DRY_RUN=false
-    Real Meta Graph API v18 calls via meta_client.MetaClient.from_env().
-    Requires META_ACCESS_TOKEN, META_PAGE_ID in .env.
-    META_IG_USER_ID required for Instagram posts.
+    Facebook/Instagram: meta_client.MetaClient.from_env()
+        Requires META_ACCESS_TOKEN, META_PAGE_ID (+ META_IG_USER_ID for IG).
+    Twitter/X: x_client.XClient.from_env()
+        Requires X_BEARER_TOKEN.
 
 Registered action_types
 -----------------------
     social_post_facebook    — Post to Facebook Page feed (text or photo).
     social_post_instagram   — Two-step IG media container + publish.
-    social_post_twitter     — Simulated tweet (no real API; no credentials needed).
+    social_post_twitter     — POST /2/tweets via X API v2.
     social_get_analytics    — Meta Page insights; falls back to "not_available".
 
 Environment variables (required only when MCP_DRY_RUN=false)
@@ -28,6 +32,7 @@ Environment variables (required only when MCP_DRY_RUN=false)
     META_ACCESS_TOKEN   Page-level access token (Facebook + Instagram).
     META_PAGE_ID        Numeric Facebook Page ID.
     META_IG_USER_ID     Instagram Business account user ID (for IG posts).
+    X_BEARER_TOKEN      X API v2 Bearer Token (tweet.write scope required).
 
 See docs/SOCIAL_SETUP.md for credential setup and token generation.
 """
@@ -274,46 +279,84 @@ def handle_social_post_instagram(payload: dict, dry_run: bool = True) -> dict:
 
 def handle_social_post_twitter(payload: dict, dry_run: bool = True) -> dict:
     """
-    Simulated Twitter/X post (backward compatible).
+    Post a tweet via X API v2  POST /2/tweets.
 
-    Twitter integration is not included in this Meta-focused release.
-    All calls return dry_run_logged regardless of dry_run flag.
+    DRY_RUN=true  → logs intent, no network call.
+    DRY_RUN=false → real POST /2/tweets with Bearer Token auth.
+                    Requires X_BEARER_TOKEN in .env.
 
     Expected payload keys:
-        text        — tweet text
+        text        — tweet text (max 280 chars; auto-truncated)
+        content     — alias for text
         task_file   — originating task filename (audit)
     """
     task_file = payload.get("task_file", "unknown")
     text      = payload.get("text", payload.get("content", "<no text provided>"))
     account   = payload.get("account", "@AIEmployeeVault")
-    sim_id    = _simulated_post_id("twitter")
 
-    result: dict = {
-        "server":             SERVER_NAME,
-        "action_type":        "social_post_twitter",
-        "dry_run":            dry_run,
-        "result":             "dry_run_logged",
-        "simulated_post_id":  sim_id,
-        "message":            f"[SIMULATED] Would tweet from {account!r} — task: {task_file!r}",
-        "timestamp":          _now(),
-        "note":               "Twitter/X integration not enabled. Configure X API credentials to enable.",
-        "intent": {
-            "platform":     "twitter",
-            "account":      account,
-            "text_preview": text[:120],
-            "char_count":   len(text),
-            "task_file":    task_file,
-        },
+    if dry_run:
+        sim_id = _simulated_post_id("twitter")
+        result: dict = {
+            "server":             SERVER_NAME,
+            "action_type":        "social_post_twitter",
+            "dry_run":            True,
+            "result":             "dry_run_logged",
+            "simulated_tweet_id": sim_id,
+            "message":            f"[DRY RUN] Would tweet from {account!r} — task: {task_file!r}",
+            "timestamp":          _now(),
+            "intent": {
+                "platform":     "twitter",
+                "text_preview": text[:120],
+                "char_count":   len(text),
+                "task_file":    task_file,
+            },
+        }
+        log_action(SERVER_NAME, "social_post_twitter_dry_run", {
+            "request":  {"text": text[:120]},
+            "response": "dry_run — no network call",
+            "task_file": task_file,
+            "dry_run":   True,
+        })
+        print(f"  [{SERVER_NAME}] DRY RUN: Would tweet via X API v2")
+        print(f"  [{SERVER_NAME}]   Text: {text[:80]}...")
+        return result
+
+    # ── Real X API v2 call ──
+    request_details = {
+        "action_type": "social_post_twitter",
+        "api":         "X API v2",
+        "endpoint":    "POST /2/tweets",
+        "request":     {"text": text[:120]},
+        "task_file":   task_file,
+        "dry_run":     False,
     }
-    log_action(SERVER_NAME, "social_post_twitter_simulated", {
-        "request":  {"text": text[:120], "account": account},
-        "response": "simulated — Twitter/X integration not configured",
-        "task_file": task_file,
-        "note":     "Add X API credentials and integrate tweepy/requests-oauthlib to enable.",
-    })
-    print(f"  [{SERVER_NAME}] SIMULATED: Would tweet from {account!r}")
-    print(f"  [{SERVER_NAME}]   Text: {text[:80]}...")
-    return result
+    try:
+        from x_client import XClient
+        client = XClient.from_env()
+        resp   = client.post_tweet(text)
+        result = {
+            "server":      SERVER_NAME,
+            "action_type": "social_post_twitter",
+            "dry_run":     False,
+            "result":      "posted",
+            "tweet_id":    resp["tweet_id"],
+            "text":        resp["text"],
+            "message":     f"Tweeted via X API v2: tweet_id={resp['tweet_id']}",
+            "timestamp":   _now(),
+        }
+        log_action(SERVER_NAME, "social_post_twitter_ok", {
+            **request_details,
+            "response": resp["raw"],
+        })
+        print(f"  [{SERVER_NAME}] Tweeted via X API v2: tweet_id={resp['tweet_id']}")
+        return result
+    except Exception as exc:
+        log_action(SERVER_NAME, "social_post_twitter_error", {
+            **request_details,
+            "response": {"error": str(exc)},
+        }, success=False)
+        print(f"  [{SERVER_NAME}] ERROR posting tweet: {exc}")
+        return _error_result("social_post_twitter", False, str(exc), task_file)
 
 
 def handle_social_get_analytics(payload: dict, dry_run: bool = True) -> dict:

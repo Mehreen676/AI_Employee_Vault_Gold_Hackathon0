@@ -699,6 +699,48 @@ python scripts/run_daily_audit.py --all
 
 ---
 
+## X (Twitter) API v2 Integration
+
+> **Requires an X Developer App with `tweet.write` scope.**
+> `MCP_DRY_RUN=true` (default) simulates tweets — no X API calls made.
+
+### Environment variable
+
+```ini
+X_BEARER_TOKEN=AAAAAAAAxxxxx...   # OAuth 2.0 user access token (tweet.write)
+```
+
+Generate at **X Developer Portal → Projects & Apps → Keys and Tokens**.
+The token must have the `tweet.write` scope (user-context OAuth 2.0 with PKCE,
+not app-only Bearer Token which is read-only).
+
+### Enable real calls
+
+```bash
+export MCP_DRY_RUN=false
+```
+
+### Example command
+
+```bash
+python -c "
+from mcp.router import dispatch_action
+r = dispatch_action('social_post_twitter', {
+    'text': 'Shipped: AI Employee Vault Gold Tier is live! #AIEmployee #GoldTier',
+    'task_file': 'launch-tweet.md'
+})
+print(r)
+"
+```
+
+### Endpoint
+
+`POST https://api.twitter.com/2/tweets` — JSON body `{"text": "..."}`,
+`Authorization: Bearer <X_BEARER_TOKEN>`. Auto-truncates to 280 chars.
+Full API response JSON is written to `Logs/*.json` on every call.
+
+---
+
 ## Meta (Facebook/Instagram) Integration
 
 > **Requires a Meta Developer App with a Page-level access token.**
