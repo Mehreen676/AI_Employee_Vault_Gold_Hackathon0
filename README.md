@@ -632,6 +632,40 @@ See `docs/SOCIAL_DEMO.md` for the full 60-second walkthrough.
 
 ---
 
+## Scheduled Audit (Daily)
+
+The daily audit runner reads all `Logs/*.json` entries and produces a human-readable
+Markdown report plus a machine-readable JSON evidence snapshot.
+
+### Run manually
+
+```bash
+python scripts/run_daily_audit.py
+```
+
+Outputs:
+- `Business/Reports/DAILY_AUDIT_<date>.md` — executive summary with success rate, top servers/actions, hourly heatmap, error list
+- `Evidence/DAILY_AUDIT_<date>.json` — full stats snapshot for CI / judge review
+
+### Options
+
+```bash
+# Audit a specific date
+python scripts/run_daily_audit.py --date 2026-02-24
+
+# Backfill — audit every date found in Logs/
+python scripts/run_daily_audit.py --all
+```
+
+### Cron schedule (Linux/Mac)
+
+```cron
+# Run at 00:05 UTC daily
+5 0 * * * cd /path/to/vault && python scripts/run_daily_audit.py >> /tmp/vault_audit.log 2>&1
+```
+
+---
+
 ## Tier Progression
 
 | Tier | Features |
