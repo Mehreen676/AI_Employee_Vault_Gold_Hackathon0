@@ -699,6 +699,96 @@ python scripts/run_daily_audit.py --all
 
 ---
 
+## Meta (Facebook/Instagram) Integration
+
+> **Requires a Meta Developer App with a Page-level access token.**
+> `MCP_DRY_RUN=true` (default) simulates all posts — no Meta API calls made.
+
+### Environment variables
+
+```ini
+META_ACCESS_TOKEN=EAAxxxxx...   # Page-level access token
+META_PAGE_ID=123456789          # Numeric Facebook Page ID
+META_IG_USER_ID=987654321       # Instagram Business account user ID (IG posts only)
+```
+
+Generate a token at: **Facebook Developer Console → Graph API Explorer →
+select your App + Page → Get Page Access Token**.
+
+For a long-lived token (60 days):
+```bash
+# Exchange short-lived user token for long-lived page token
+curl "https://graph.facebook.com/v18.0/oauth/access_token?\
+  grant_type=fb_exchange_token&client_id=APP_ID&client_secret=APP_SECRET\
+  &fb_exchange_token=SHORT_LIVED_TOKEN"
+```
+
+### Enable real calls
+
+```bash
+export MCP_DRY_RUN=false
+```
+
+### Command examples
+
+```bash
+# 1. Post text to Facebook Page feed
+python -c "
+from mcp.router import dispatch_action
+r = dispatch_action('social_post_facebook', {
+    'content': 'Excited to announce our Q1 results! #AIEmployee',
+    'task_file': 'q1-announcement.md'
+})
+print(r)
+"
+
+# 2. Post photo to Instagram Business account
+python -c "
+from mcp.router import dispatch_action
+r = dispatch_action('social_post_instagram', {
+    'image_url': 'https://example.com/banner.jpg',
+    'caption':   'New product launch — link in bio. #GoldTier',
+    'task_file': 'ig-launch.md'
+})
+print(r)
+"
+
+# 3. Fetch real Meta Page insights
+python -c "
+from mcp.router import dispatch_action
+r = dispatch_action('social_get_analytics', {'platform': 'facebook', 'period': 'day'})
+print(r)
+"
+```
+
+### Audit logs
+
+Every API request and response is written to `Logs/*.json`:
+
+```bash
+ls -lt Logs/ | head -5
+```
+
+Each entry includes: `timestamp`, `action`, `request` payload, `response`
+(post ID or error), `success`.
+
+### HITL approval
+
+Social posts (`social_post_facebook`, `social_post_instagram`) are classified
+as sensitive actions and routed through `Pending_Approval/` before dispatch.
+The stub receives the call only after a human approves the task file.
+
+### Notes
+
+- `social_post_twitter` is registered for backward compatibility but returns
+  a simulated result (X API credentials not configured in this release).
+- `social_get_analytics` falls back to `"result": "not_available"` if the
+  token lacks `read_insights` permission — it never crashes.
+- Instagram posts **require** a public `image_url`. Text-only IG posts are
+  not supported by the Meta Content Publishing API.
+
+---
+
 ## Real Odoo (JSON-RPC) Integration
 
 > **Requires a local Odoo 19 Community instance running at `http://localhost:8069`.**
