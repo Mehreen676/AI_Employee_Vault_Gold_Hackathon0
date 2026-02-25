@@ -699,6 +699,79 @@ python scripts/run_daily_audit.py --all
 
 ---
 
+## Real Odoo (JSON-RPC) Integration
+
+> **Requires a local Odoo 19 Community instance running at `http://localhost:8069`.**
+> When `MCP_DRY_RUN=true` (default) all calls are simulated — no Odoo needed.
+
+### Environment variables
+
+Add these to your `.env` (copy from `.env.example`):
+
+```ini
+ODOO_URL=http://localhost:8069
+ODOO_DB=mycompany          # Database name (Settings > General > Database)
+ODOO_USERNAME=admin        # Login email / username
+ODOO_PASSWORD=admin        # Password or API key
+```
+
+### Enable real calls
+
+```bash
+export MCP_DRY_RUN=false
+```
+
+### Command examples
+
+```bash
+# 1. Create a contact (res.partner)
+python -c "
+from mcp.router import dispatch_action
+r = dispatch_action('odoo_create_partner', {
+    'name': 'Acme Corp', 'email': 'billing@acme.com', 'phone': '+1-555-0100'
+})
+print(r)
+"
+
+# 2. Create a customer invoice (account.move out_invoice)
+python -c "
+from mcp.router import dispatch_action
+r = dispatch_action('odoo_create_invoice', {
+    'partner_id': 1,
+    'lines': [{'name': 'Consulting Q1', 'quantity': 10, 'price_unit': 150.0}],
+    'currency': 'USD'
+})
+print(r)
+"
+
+# 3. List recent invoices
+python -c "
+from mcp.router import dispatch_action
+r = dispatch_action('odoo_list_invoices', {'limit': 5, 'state': 'posted'})
+for inv in r.get('invoices', []): print(inv)
+"
+```
+
+### Audit logs
+
+Every request **and** response is written as a structured JSON file in `Logs/`:
+
+```bash
+ls -lt Logs/ | head -5       # newest entries first
+cat Logs/<timestamp>_*.json  # inspect a single RPC audit record
+```
+
+Each log entry contains: `timestamp`, `server`, `action`, `request` payload, `response` (or `error`), `success`.
+
+### Transport details
+
+- Protocol: **JSON-RPC 2.0** over HTTP POST to `<ODOO_URL>/jsonrpc`
+- No third-party libraries — stdlib `urllib` only
+- Authentication: `common/authenticate` → cached UID → `object/execute_kw`
+- `ODOO_USER` is also accepted as a legacy alias for `ODOO_USERNAME`
+
+---
+
 ## Tier Progression
 
 | Tier | Features |

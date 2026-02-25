@@ -1,8 +1,8 @@
 """
-odoo_client.py — Odoo JSON-RPC client skeleton (Gold Tier).
+odoo_client.py — Odoo 19 Community JSON-RPC client (Gold Tier).
 
-Connects to any Odoo 14 / 15 / 16 / 17 instance using the standard
-/jsonrpc endpoint.  No external dependencies — stdlib only (urllib + json).
+Connects to any Odoo 14–19 instance via the standard /jsonrpc endpoint.
+No external dependencies — stdlib only (urllib + json).
 
 Functions
 ---------
@@ -18,13 +18,15 @@ Functions
 
 Environment variables (set in .env — see .env.example)
 -------------------------------------------------------
-    ODOO_URL       Base URL, e.g.  https://mycompany.odoo.com
-                   (no trailing slash; http:// for local dev)
-    ODOO_DB        Database name shown in Settings -> General -> Database
-    ODOO_USER      Login username / email address
-    ODOO_PASSWORD  User password  OR  Odoo API key
-                   (Settings -> Activate developer mode ->
-                    Technical -> API Keys -> New)
+    ODOO_URL        Base URL, e.g. http://localhost:8069
+                    (no trailing slash; http:// for local dev)
+    ODOO_DB         Database name shown in Settings -> General -> Database
+    ODOO_USERNAME   Login username / email address
+                    (ODOO_USER is also accepted for backward compatibility)
+    ODOO_PASSWORD   User password OR Odoo API key
+                    (Settings -> Activate developer mode ->
+                     Technical -> API Keys -> New)
+    ODOO_TIMEOUT_S  Network timeout in seconds (default: 30)
 
 Security
 --------
@@ -83,14 +85,22 @@ class OdooClient:
         """
         Build an OdooClient from environment variables.
 
-        Required env vars:  ODOO_URL, ODOO_DB, ODOO_USER, ODOO_PASSWORD
-        Optional env vars:  ODOO_TIMEOUT_S  (default: 30)
+        Reads (in priority order):
+            ODOO_URL       — required
+            ODOO_DB        — required
+            ODOO_USERNAME  — required (ODOO_USER accepted as fallback)
+            ODOO_PASSWORD  — required
+            ODOO_TIMEOUT_S — optional, default 30
 
         Raises OdooError if any required var is missing.
         """
         url      = os.getenv("ODOO_URL",      "").strip().rstrip("/")
         db       = os.getenv("ODOO_DB",       "").strip()
-        user     = os.getenv("ODOO_USER",     "").strip()
+        # Support both ODOO_USERNAME (preferred) and ODOO_USER (legacy)
+        user     = (
+            os.getenv("ODOO_USERNAME", "").strip()
+            or os.getenv("ODOO_USER",     "").strip()
+        )
         password = os.getenv("ODOO_PASSWORD", "").strip()
         timeout  = int(os.getenv("ODOO_TIMEOUT_S", "30"))
 
@@ -99,7 +109,7 @@ class OdooClient:
             for name, val in [
                 ("ODOO_URL",      url),
                 ("ODOO_DB",       db),
-                ("ODOO_USER",     user),
+                ("ODOO_USERNAME", user),
                 ("ODOO_PASSWORD", password),
             ]
             if not val
@@ -187,7 +197,7 @@ class OdooClient:
 
     def authenticate(self) -> int:
         """
-        Authenticate with ODOO_USER / ODOO_PASSWORD.
+        Authenticate with ODOO_USERNAME / ODOO_PASSWORD.
 
         Returns the user's uid (int > 0) and caches it for subsequent calls.
         Raises OdooError if credentials are invalid.
@@ -200,7 +210,7 @@ class OdooClient:
             raise OdooError(
                 f"Authentication failed for user {self._user!r} "
                 f"on database {self._db!r}.\n"
-                "Check ODOO_USER and ODOO_PASSWORD in .env.\n"
+                "Check ODOO_USERNAME and ODOO_PASSWORD in .env.\n"
                 "See docs/ODOO_SETUP.md — Troubleshooting."
             )
         self._uid = int(uid)
@@ -242,7 +252,7 @@ class OdooClient:
             kwargs or {},
         )
 
-    # ── High-level stub methods ───────────────────────────────────────────────
+    # ── High-level helpers ────────────────────────────────────────────────────
 
     def create_partner_stub(
         self,
@@ -259,7 +269,7 @@ class OdooClient:
             name:     Contact full name (required)
             email:    Email address
             phone:    Phone number
-            company:  Company name (sets is_company=False, company_name=company)
+            company:  Company name (sets company_name field)
             **extra_vals: Any other valid res.partner field values
 
         Returns:
@@ -288,12 +298,12 @@ class OdooClient:
         Create a customer invoice (account.move, move_type='out_invoice').
 
         Args:
-            partner_id:    res.partner ID to bill (use create_partner_stub() first)
+            partner_id:    res.partner ID to bill
             lines:         List of invoice line dicts, each with:
                                name        (str)   — product/service description
                                quantity    (float) — quantity (default 1.0)
                                price_unit  (float) — unit price
-            currency_code: ISO 4217 currency code; Odoo resolves by name (default "USD")
+            currency_code: ISO 4217 currency code (default "USD")
             ref:           Optional vendor/customer reference string
 
         Returns:
@@ -303,7 +313,6 @@ class OdooClient:
             To post (confirm) the invoice after creation call:
                 client.execute("account.move", "action_post", [[invoice_id]])
         """
-        # Build Odoo one2many create commands: (0, 0, line_vals)
         line_commands: list = []
         for line in (lines or [{"name": "Service", "quantity": 1.0, "price_unit": 0.0}]):
             line_commands.append((0, 0, {
@@ -325,8 +334,8 @@ class OdooClient:
 
     def list_invoices(
         self,
-        limit: int  = 20,
-        state: str  | None = None,
+        limit:      int            = 20,
+        state:      str | None     = None,
         move_types: list[str] | None = None,
     ) -> list[dict]:
         """
