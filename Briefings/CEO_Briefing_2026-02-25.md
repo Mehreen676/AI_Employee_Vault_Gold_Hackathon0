@@ -1,6 +1,6 @@
 # Weekly CEO Briefing
 
-**Generated:** 2026-02-25 04:45 UTC
+**Generated:** 2026-02-25 05:50 UTC
 **Week:** 2026-02-23 to 2026-03-01 (ISO Week 9)
 **Day:** Wednesday
 
@@ -8,12 +8,12 @@
 
 ## Executive Summary
 
-- **Tasks Completed This Week:** 27
+- **Tasks Completed This Week:** 28
 - **Business Tasks Active:** 1
 - **Personal Tasks Active:** 1
-- **Total System Actions (7d):** 4233
-- **Errors (7d):** 0
-- **System Health:** HEALTHY
+- **Total System Actions (7d):** 4295
+- **Errors (7d):** 5
+- **System Health:** DEGRADED
 
 ---
 
@@ -46,35 +46,56 @@
 
 | Action | Count |
 |--------|-------|
-| mcp_audit_ops.get_recent_actions | 338 |
-| mcp_calendar_ops.get_current_week | 340 |
-| gold_agent.agent_complete | 169 |
-| mcp_file_ops.list_tasks | 511 |
-| gold_agent.loop_start | 170 |
-| ceo_briefing.save_briefing | 169 |
-| domain_router.get_all_domain_tasks | 170 |
-| gold_agent.loop_complete | 170 |
-| gold_agent.agent_start | 170 |
-| mcp_audit_ops.get_action_summary | 169 |
-| mcp_file_ops.write_task | 173 |
+| mcp_audit_ops.get_recent_actions | 340 |
+| mcp_calendar_ops.get_current_week | 342 |
+| gold_agent.agent_complete | 170 |
+| mcp_file_ops.list_tasks | 524 |
+| gold_agent.loop_start | 171 |
+| ceo_briefing.save_briefing | 170 |
+| domain_router.get_all_domain_tasks | 171 |
+| gold_agent.loop_complete | 171 |
+| gold_agent.agent_start | 171 |
+| mcp_audit_ops.get_action_summary | 170 |
+| mcp_file_ops.write_task | 175 |
 | gold_agent.openai_fallback | 2 |
-| mcp_file_ops.move_task | 2 |
-| domain_router.classify_task | 4 |
-| mcp_file_ops.read_task | 1672 |
+| mcp_file_ops.move_task | 3 |
+| domain_router.classify_task | 7 |
+| mcp_file_ops.read_task | 1685 |
 | gold_agent.task_completed | 2 |
 | domain_router.route_task | 2 |
+| gold_agent.openai_config_missing | 1 |
+| social_mcp_stub.social_post_facebook_dry_run | 1 |
+| mcp_router.dispatch_ok.odoo_list_invoices | 1 |
+| odoo_mcp_stub.odoo_create_invoice_dry_run | 1 |
+| mcp_router.dispatch_ok.odoo_create_partner | 1 |
+| social_mcp_stub.social_post_twitter_dry_run | 1 |
+| odoo_mcp_stub.odoo_create_partner_dry_run | 1 |
+| mcp_router.dispatch_ok.social_get_analytics | 1 |
+| mcp_router.dispatch_ok.social_post_instagram | 1 |
+| social_mcp_stub.social_get_analytics_simulated | 1 |
+| mcp_router.dispatch_ok.odoo_create_invoice | 1 |
+| social_mcp_stub.social_post_instagram_dry_run | 1 |
+| mcp_router.dispatch_ok.social_post_facebook | 1 |
+| mcp_router.dispatch_ok.social_post_twitter | 1 |
+| odoo_mcp_stub.odoo_list_invoices_dry_run | 1 |
+| gold_agent.task_error | 3 |
+| gold_agent.max_retries_reached | 1 |
 
 ---
 
 ## Errors & Issues
 
-- No errors this week.
+- [2026-02-25T04:16:17.798324+00:00] gold_agent.openai_config_missing — unknown
+- [2026-02-25T05:50:10.821908+00:00] gold_agent.task_error — Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+- [2026-02-25T05:50:14.707270+00:00] gold_agent.task_error — Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+- [2026-02-25T05:50:18.257447+00:00] gold_agent.task_error — Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+- [2026-02-25T05:50:19.620892+00:00] gold_agent.max_retries_reached — unknown
 
 ---
 
 ## Recommendations
 
-- System operating normally. No action required.
+- Review error log and address recurring failures.
 - Task distribution is balanced.
 
 ---

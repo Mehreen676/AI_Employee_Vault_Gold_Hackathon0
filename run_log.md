@@ -176,3 +176,8 @@
 2026-02-25 02:44:10Z - Gold Agent Complete | loops=1 processed=0 failed=0 db=True run_id=177 db_events=24
 2026-02-25 04:16:17Z - FATAL: OpenAI not configured. Exiting.
 2026-02-25 04:45:20Z - Gold Agent Complete | loops=1 processed=0 failed=0 db=True run_id=178 db_events=24
+2026-02-25 05:50:07Z - Gold Inbox: moved facebook_post_demo.md -> Needs_Action/
+2026-02-25 05:50:10Z - Gold ERROR: facebook_post_demo.md | Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2026-02-25 05:50:14Z - Gold ERROR: facebook_post_demo.md | Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2026-02-25 05:50:18Z - Gold ERROR: facebook_post_demo.md | Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
+2026-02-25 05:50:22Z - Gold Agent Complete | loops=4 processed=0 failed=1 db=True run_id=179 db_events=46
