@@ -883,6 +883,47 @@ AI_Employee_Vault_Gold_Cloud/
 
 ---
 
+## 💰 Accounting Integration (Xero Stub)
+
+Invoice creation via the Xero API — stub implementation, no real credentials required.
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/accounting/invoice` | Create a Xero invoice for a customer |
+
+**Request body:**
+
+```json
+{ "customer": "Acme Corp", "amount": 1500.00 }
+```
+
+**Example request:**
+
+```bash
+curl -X POST http://localhost:8000/accounting/invoice \
+  -H "Content-Type: application/json" \
+  -d '{"customer": "Acme Corp", "amount": 1500.00}'
+```
+
+**Example response (`201 Created`):**
+
+```json
+{
+  "invoice_id": "INV-001",
+  "customer":   "Acme Corp",
+  "amount":     1500.00,
+  "status":     "created",
+  "timestamp":  "2026-02-26T12:00:00+00:00"
+}
+```
+
+Each invoice is appended to `Logs/accounting.json` and the standard audit trail.
+Source file: `mcp_accounting_xero.py` · Router: `backend/routers/accounting.py`
+
+> To go live: set `_XERO_CLIENT_ID`, `_XERO_CLIENT_SECRET`, and `_XERO_TENANT_ID` in `mcp_accounting_xero.py` and replace the stub body with a real `requests` call to the Xero API v2.
+
+---
+
 ## 🌐 Social Integrations
 
 Three social MCP stubs exposed as REST endpoints — no real tokens required for testing.
