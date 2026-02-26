@@ -1,17 +1,3 @@
----
-title: AI Employee Vault Gold Cloud
-emoji: 🤖
-colorFrom: yellow
-colorTo: yellow
-sdk: docker
-app_port: 7860
-pinned: false
----
-
-# AI Employee Vault — Gold Tier
-
-> Hackathon 0 | Personal AI Employee with full cross-domain autonomy
-
 <p align="center">
   <img src="https://img.shields.io/badge/Tier-Gold%20%F0%9F%A5%87-FFD700?style=flat-square&logoColor=white" alt="Gold Tier"/>
   <img src="https://img.shields.io/badge/Cloud-GitHub%20Actions-2088FF?style=flat-square&logo=githubactions&logoColor=white" alt="Cloud"/>
@@ -23,6 +9,11 @@ pinned: false
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python"/>
   <img src="https://img.shields.io/badge/License-MIT-22c55e?style=flat-square" alt="License"/>
 </p>
+
+<h1 align="center">🚀 AI Employee Vault — Gold Tier</h1>
+<h3 align="center">Autonomous AI Agent with HITL, MCP, Audit Logging & Cloud Deployment</h3>
+
+<p align="center"><em>Hackathon 0 · Personal AI Employee with full cross-domain autonomy</em></p>
 
 ## What Is This?
 
