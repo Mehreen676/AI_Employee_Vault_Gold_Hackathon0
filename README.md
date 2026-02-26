@@ -227,6 +227,46 @@ GET /mcp/tools     # registered tool registry
 
 ---
 
+## 📈 Metrics
+
+Prometheus-style plain-text metrics endpoint — no extra dependencies required.
+
+```
+GET /metrics
+```
+
+**Sample output:**
+
+```
+# HELP vault_agent_runs_total Total number of Gold Agent executions recorded in DB
+# TYPE vault_agent_runs_total counter
+vault_agent_runs_total 7
+
+# HELP vault_tasks_processed_total Cumulative tasks processed across all agent runs
+# TYPE vault_tasks_processed_total counter
+vault_tasks_processed_total 42
+
+# HELP vault_hitl_pending_total Tasks currently waiting in Pending_Approval/
+# TYPE vault_hitl_pending_total gauge
+vault_hitl_pending_total 1
+
+# HELP vault_mcp_servers_total Number of MCP server modules in vault root
+# TYPE vault_mcp_servers_total gauge
+vault_mcp_servers_total 4
+
+# HELP vault_errors_total Cumulative failed tasks across all agent runs
+# TYPE vault_errors_total counter
+vault_errors_total 0
+
+# HELP vault_uptime_seconds Seconds since the FastAPI process started
+# TYPE vault_uptime_seconds gauge
+vault_uptime_seconds 3124.87
+```
+
+> DB failures degrade gracefully — all counters fall back to `0` rather than returning a `5xx`. Uptime is calculated with `time.monotonic()` from process start.
+
+---
+
 ## B) API Endpoints (as seen in Swagger)
 
 All 15 endpoints grouped by Swagger tag. Every route is registered in `main.py` via `app.include_router()` from `backend/routers/`.
