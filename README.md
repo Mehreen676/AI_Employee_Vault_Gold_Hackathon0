@@ -23,6 +23,14 @@ Built on 4 MCP servers, a production FastAPI REST API with 15 endpoints, compreh
 
 ---
 
+## 🎥 Live Demo
+
+![Demo GIF](docs/demo.gif)
+
+> _Swap `docs/demo.gif` with a real screen recording of the Swagger UI + HITL approval flow._
+
+---
+
 ## Architecture
 
 ```
