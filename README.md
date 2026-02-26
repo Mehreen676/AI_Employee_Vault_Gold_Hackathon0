@@ -10,6 +10,16 @@
   <img src="https://img.shields.io/badge/License-MIT-22c55e?style=flat-square" alt="License"/>
 </p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/Tier-Gold-yellow" alt="Gold"/>
+  <img src="https://img.shields.io/badge/FastAPI-Production-green" alt="FastAPI"/>
+  <img src="https://img.shields.io/badge/MCP-MultiServer-blue" alt="MCP"/>
+  <img src="https://img.shields.io/badge/Social-Integrated-purple" alt="Social"/>
+  <img src="https://img.shields.io/badge/Accounting-XeroStub-orange" alt="Accounting"/>
+  <img src="https://img.shields.io/badge/Metrics-PrometheusStyle-red" alt="Metrics"/>
+  <img src="https://img.shields.io/badge/Dashboard-GoldUI-black" alt="Dashboard"/>
+</p>
+
 <h1 align="center">🚀 AI Employee Vault — Gold Tier</h1>
 <h3 align="center">Autonomous AI Agent with HITL, MCP, Audit Logging & Cloud Deployment</h3>
 
