@@ -883,4 +883,55 @@ AI_Employee_Vault_Gold_Cloud/
 
 ---
 
+## 🌐 Social Integrations
+
+Three social MCP stubs exposed as REST endpoints — no real tokens required for testing.
+
+| Method | Endpoint | Platform |
+|--------|----------|----------|
+| `POST` | `/social/facebook` | Facebook Graph API (stub) |
+| `POST` | `/social/instagram` | Meta Graph API (stub) |
+| `POST` | `/social/twitter` | Twitter API v2 (stub) |
+
+All three accept the same request body:
+
+```json
+{ "message": "Your post text here" }
+```
+
+**Example requests:**
+
+```bash
+BASE=http://localhost:8000
+
+curl -X POST $BASE/social/facebook \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Announcing the AI Employee Vault Gold Tier!"}'
+
+curl -X POST $BASE/social/instagram \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Gold Tier AI Employee Vault is live. Autonomous. Audited."}'
+
+curl -X POST $BASE/social/twitter \
+  -H "Content-Type: application/json" \
+  -d '{"message": "AI Employee Vault Gold Tier — autonomous agent, HITL, MCP, audit logs."}'
+```
+
+**Example response:**
+
+```json
+{
+  "platform":  "facebook",
+  "status":    "posted",
+  "message":   "Announcing the AI Employee Vault Gold Tier!",
+  "summary":   "[AI Summary] Announcing the AI Employee Vault Gold Tier!",
+  "timestamp": "2026-02-26T12:00:00+00:00"
+}
+```
+
+Each call is audit-logged to `/Logs/social_<platform>.json` and the standard `/Logs/` audit trail.
+Source files: `mcp_social_facebook.py` · `mcp_social_instagram.py` · `mcp_social_twitter.py`
+
+---
+
 *Built for Hackathon 0 by Mehreen*
