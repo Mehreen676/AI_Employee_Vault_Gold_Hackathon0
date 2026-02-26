@@ -198,6 +198,27 @@ HTTP `503 Service Unavailable` — DB is considered critical.
 
 ---
 
+## 📊 System Observability
+
+| Signal | What it captures |
+|--------|-----------------|
+| **Neon Postgres** | Every agent run recorded in `agent_runs` table — run ID, timestamp, loop count, tasks processed, failures |
+| **JSON audit logs** | Each action written as an individual `.json` file under `/Logs` — server name, tool, arguments, result, timestamp |
+| **`GET /health`** | Validates live DB connectivity and presence of `OPENAI_API_KEY` + `INSTAGRAM_ACCESS_TOKEN`; returns `200` healthy or `503` degraded |
+| **`GET /agent/status`** | Returns latest `AgentRun` record — last run ID, timestamp, total run count, current state |
+| **`GET /mcp/tools`** | Lists every registered MCP tool with name, description, and JSON input schema |
+| **GitHub Actions** | `.github/workflows/gold-agent.yml` runs on push and cron — inbox watcher → agent → commits results back to repo automatically |
+
+### Quick observability checks
+
+```bash
+GET /health        # DB + key validation
+GET /agent/status  # last agent run record
+GET /mcp/tools     # registered tool registry
+```
+
+---
+
 ## B) API Endpoints (as seen in Swagger)
 
 All 15 endpoints grouped by Swagger tag. Every route is registered in `main.py` via `app.include_router()` from `backend/routers/`.
