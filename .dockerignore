@@ -1,0 +1,30 @@
+# Never bake secrets into the Docker image
+.env
+credentials.json
+token.json
+
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+
+# Git history (saves ~50 MB on large repos)
+.git/
+.gitignore
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Claude local settings
+.claude/
+
+# Test / dev artefacts
+*.log

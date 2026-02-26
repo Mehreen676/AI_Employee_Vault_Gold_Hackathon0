@@ -8,6 +8,8 @@
   <img src="https://img.shields.io/badge/HITL-Enabled-FF6B35?style=flat-square&logo=shield&logoColor=white" alt="HITL"/>
   <img src="https://img.shields.io/badge/MCP-4%20Servers-10B981?style=flat-square&logo=server&logoColor=white" alt="MCP"/>
   <img src="https://img.shields.io/badge/Audit-JSON%20%2B%20Neon%20DB-6366F1?style=flat-square&logo=postgresql&logoColor=white" alt="Audit"/>
+  <img src="https://img.shields.io/badge/FastAPI-REST%20API-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI"/>
+  <img src="https://img.shields.io/badge/HuggingFace-Spaces-FFD21E?style=flat-square&logo=huggingface&logoColor=black" alt="HuggingFace"/>
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python"/>
   <img src="https://img.shields.io/badge/License-MIT-22c55e?style=flat-square" alt="License"/>
 </p>
@@ -16,7 +18,7 @@
 
 A fully autonomous AI Employee that processes tasks from email or manual input, classifies them across **Personal** and **Business** domains, summarizes them with OpenAI, and loops until everything is done — then generates a **Weekly CEO Briefing**.
 
-Built on 4 MCP servers, comprehensive JSON audit logging, error recovery with graceful degradation, and a **Ralph Wiggum autonomous loop** ("I'm in danger!") that keeps running until all tasks reach `Done/`.
+Built on 4 MCP servers, a production FastAPI REST API, comprehensive JSON audit logging, error recovery with graceful degradation, and a **Ralph Wiggum autonomous loop** ("I'm in danger!") that keeps running until all tasks reach `Done/`.
 
 ---
 
@@ -82,6 +84,7 @@ Gmail / Manual Input
 
 | Feature | Description |
 |---------|-------------|
+| **REST API (FastAPI)** | 15 production endpoints across 5 routers — fully documented at `/docs` |
 | **Cross-Domain Integration** | Tasks auto-classified as Personal or Business via keyword scoring + header detection |
 | **4 MCP Servers** | `file_ops`, `email_ops`, `calendar_ops`, `audit_ops` — each with dedicated tools |
 | **Ralph Wiggum Loop** | Autonomous loop keeps processing until `Needs_Action/` is empty or MAX_LOOPS hit |
@@ -91,6 +94,91 @@ Gmail / Manual Input
 | **Neon DB Audit Trail** | All events + agent run stats persisted to Postgres `agent_runs` + `events` tables |
 | **Error Recovery** | Failed tasks retry up to MAX_RETRIES, then move to Done with error status |
 | **Gmail Inbox Watcher** | `watchers/gmail_inbox_watcher.py` polls Gmail, converts unread emails to `Inbox/` task files; safe DRY_RUN=true default |
+| **Docker / HF Spaces** | Single `Dockerfile` deploys on Hugging Face Spaces (Docker SDK) — port 7860 |
+
+---
+
+## REST API — Cloud Proof
+
+The FastAPI backend is live with **15 endpoints** across 5 routers, all visible in the interactive Swagger UI at `/docs`.
+
+### Start the server
+
+```bash
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+```
+
+Open **http://localhost:8000/docs** to explore and test every endpoint interactively.
+
+### Endpoint Reference
+
+| Method | Path | Router | Description |
+|--------|------|--------|-------------|
+| `GET` | `/` | General | Service info + version |
+| `GET` | `/health` | General | Health check — DB + env var status |
+| `GET` | `/docs` | — | Swagger UI (interactive docs) |
+| `GET` | `/redoc` | — | ReDoc API reference |
+| `POST` | `/agent/run` | Agent | Trigger agent run — returns **202 Accepted** |
+| `GET` | `/agent/status` | Agent | Latest `AgentRun` stats from Neon DB |
+| `GET` | `/hitl/pending` | HITL | List `hitl_*.md` files in `Pending_Approval/` |
+| `POST` | `/hitl/approve` | HITL | Move file to `Approved/` (agent resumes task) |
+| `POST` | `/hitl/reject` | HITL | Move file to `Rejected/` with reason |
+| `POST` | `/approve/apply` | Approval | Unified approve or reject by `action` field |
+| `GET` | `/approve/help` | Approval | Workflow guide + CLI commands |
+| `GET` | `/mcp/tools` | MCP | List registered MCP tools + schemas |
+| `POST` | `/mcp/execute` | MCP | Execute `list_tasks`, `read_task`, `move_task` |
+| `GET` | `/inbox/tasks` | Inbox | List files currently in `Inbox/` |
+| `POST` | `/inbox/add` | Inbox | Write a new task file to `Inbox/` |
+
+### Quick curl proof
+
+```bash
+# 1. Root
+curl http://localhost:8000/
+
+# 2. Health check
+curl http://localhost:8000/health
+
+# 3. Agent status (reads from Neon DB)
+curl http://localhost:8000/agent/status
+
+# 4. List pending HITL approvals
+curl http://localhost:8000/hitl/pending
+
+# 5. Approve a HITL request
+curl -X POST http://localhost:8000/hitl/approve \
+  -H "Content-Type: application/json" \
+  -d '{"filename": "hitl_20260226_120000_task.md"}'
+
+# 6. List MCP tools
+curl http://localhost:8000/mcp/tools
+
+# 7. List tasks in Inbox/
+curl http://localhost:8000/inbox/tasks
+
+# 8. Add a task to Inbox/
+curl -X POST http://localhost:8000/inbox/add \
+  -H "Content-Type: application/json" \
+  -d '{"filename": "test-api-task.md", "content": "Review Q4 numbers and prepare summary."}'
+
+# 9. Trigger agent run (202 Accepted)
+curl -X POST http://localhost:8000/agent/run \
+  -H "Content-Type: application/json" \
+  -d '{"mode": "once", "max_loops": 1}'
+
+# 10. Approval help guide
+curl http://localhost:8000/approve/help
+```
+
+### Router files
+
+| File | Prefix | Router defines |
+|------|--------|----------------|
+| `backend/routers/agent.py` | `/agent` | `POST /run`, `GET /status` |
+| `backend/routers/hitl.py` | `/hitl` | `GET /pending`, `POST /approve`, `POST /reject` |
+| `backend/routers/approve.py` | `/approve` | `POST /apply`, `GET /help` |
+| `backend/routers/mcp.py` | `/mcp` | `GET /tools`, `POST /execute` |
+| `backend/routers/inbox.py` | `/inbox` | `GET /tasks`, `POST /add` |
 
 ---
 
@@ -110,8 +198,8 @@ Gmail / Manual Input
 ### 1. Clone & Setup
 
 ```bash
-git clone <your-repo-url>
-cd AI_Employee_Vault_Gold_Cloud
+git clone https://github.com/Mehreen676/AI_Employee_Vault_Gold_Hackathon0.git
+cd AI_Employee_Vault_Gold_Hackathon0
 pip install -r requirements.txt
 ```
 
@@ -119,24 +207,30 @@ pip install -r requirements.txt
 
 ```bash
 cp .env.example .env
-# Edit .env and add your OPENAI_API_KEY
+# Edit .env — set DATABASE_URL, OPENAI_API_KEY, INSTAGRAM_ACCESS_TOKEN
 ```
 
-### 3. Drop a Task
+### 3. Start the API
 
 ```bash
-# Create a test task in Inbox/
-cat > Inbox/test-task.md << 'EOF'
-# Quarterly Sales Report
-
-Review Q4 revenue numbers and prepare executive summary.
-Client: Acme Corp
-Deadline: Friday
-Domain: business
-EOF
+uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+# Docs: http://localhost:8000/docs
+# Health: http://localhost:8000/health
 ```
 
-### 4. Run the Gold Agent
+### 4. Drop a Task
+
+```bash
+# Via API
+curl -X POST http://localhost:8000/inbox/add \
+  -H "Content-Type: application/json" \
+  -d '{"filename": "q4-report.md", "content": "Review Q4 revenue numbers and prepare executive summary.\nClient: Acme Corp\nDeadline: Friday\nDomain: business"}'
+
+# Or drop a file directly
+echo "# Q4 Report\nReview Q4 numbers." > Inbox/q4-report.md
+```
+
+### 5. Run the Gold Agent
 
 ```bash
 python gold_agent.py
@@ -151,11 +245,11 @@ You'll see:
 --- Loop 1 ---
   Inbox: 1 file(s) moved to Needs_Action
   Tasks pending: 1
-  DONE: test-task.md
+  DONE: q4-report.md
 
   All tasks processed!
 
-CEO Briefing saved: CEO_Briefing_2026-02-18.md
+CEO Briefing saved: CEO_Briefing_2026-02-26.md
 
 ============================================================
   GOLD AGENT COMPLETE
@@ -165,7 +259,7 @@ CEO Briefing saved: CEO_Briefing_2026-02-18.md
 ============================================================
 ```
 
-### 5. (Optional) Gmail Inbox Watcher — Stream Live Emails as Tasks
+### 6. (Optional) Gmail Inbox Watcher — Stream Live Emails as Tasks
 
 ```bash
 # First-time only: generate OAuth2 token (opens browser)
@@ -173,8 +267,6 @@ py generate_gmail_token.py
 
 # Terminal 1 — watcher polls Gmail every 10 s (DRY_RUN=true by default)
 py watchers/gmail_inbox_watcher.py
-# Windows batch shortcut:
-# scripts\run_gmail_watcher.bat
 
 # Terminal 2 — agent processes emails that land in Inbox/
 py gold_agent.py
@@ -191,7 +283,7 @@ py gold_agent.py
 
 ---
 
-### 5b. Diagnostic Tools
+### Diagnostic Tools
 
 ```bash
 # MCP Health Report — registered tools, DRY_RUN status, last log timestamp
@@ -204,14 +296,14 @@ python tools/generate_architecture_diagram.py
 #         Evidence/ARCH_DIAGRAM.md
 ```
 
-### 6. Check Results
+### Check Results
 
 ```bash
 # Processed task
-cat Done/test-task.md
+cat Done/q4-report.md
 
 # Domain-routed copy
-cat Business/test-task.md
+cat Business/q4-report.md
 
 # CEO Briefing
 cat Briefings/CEO_Briefing_*.md
@@ -285,76 +377,35 @@ EOF
 ```bash
 python gold_agent.py
 ```
-Output:
-```
---- Loop 1 ---
-  Tasks pending: 1
-  HITL: send-campaign.md (awaiting approval in Pending_Approval/)
 
-  HITL queue: 1
-```
-
-**3. Review the approval request**
+**3a. Review + Approve via API**
 ```bash
-python approve.py
-```
-Output:
-```
-Pending HITL approval requests (1):
+# List pending
+curl http://localhost:8000/hitl/pending
 
-  hitl_20260219_103000_send-campaign.md
-    action=email_send  task=send-campaign.md
-
-Approve:  python approve.py <filename>
-Reject:   python approve.py --reject <filename> [--reason "text"]
+# Approve
+curl -X POST http://localhost:8000/hitl/approve \
+  -H "Content-Type: application/json" \
+  -d '{"filename": "hitl_20260226_120000_send-campaign.md"}'
 ```
 
-**4a. Approve** (agent will resume task on next run)
+**3b. Review + Reject via API**
 ```bash
-python approve.py hitl_20260219_103000_send-campaign.md
+curl -X POST http://localhost:8000/hitl/reject \
+  -H "Content-Type: application/json" \
+  -d '{"filename": "hitl_20260226_120000_send-campaign.md", "reason": "Not ready for launch"}'
 ```
 
-**4b. Reject with reason**
+**3c. Or use the CLI**
 ```bash
-python approve.py --reject hitl_20260219_103000_send-campaign.md --reason "Not ready for launch"
+python approve.py                                          # list all pending
+python approve.py hitl_20260226_120000_send-campaign.md    # approve
+python approve.py --reject hitl_20260226_120000_send-campaign.md --reason "Not ready"
 ```
 
-**5. Run agent again to complete approved tasks**
+**4. Run agent again to complete approved tasks**
 ```bash
 python gold_agent.py
-```
-Output:
-```
---- Loop 1 ---
-  HITL: 1 task(s) approved and processed
-  DONE: send-campaign.md
-```
-
-**6. Check results**
-```bash
-ls Pending_Approval/    # empty — request processed
-ls Done/                # approved task summary here
-ls Done/rejected_*      # rejected tasks archived here
-cat Logs/*.json | python -m json.tool | head -40   # audit trail
-```
-
-### Approval request format (YAML frontmatter)
-
-```yaml
----
-type: hitl_approval_request
-action: email_send
-task_file: send-campaign.md
-domain: business
-status: pending_approval
-created: 2026-02-19T10:30:00+00:00
-expires: 2026-02-20T10:30:00+00:00
-run_id: 3
-sensitive_keywords:
-  - send email
-  - email blast
-payload_summary: "Send email blast to all subscribers..."
----
 ```
 
 ---
@@ -390,69 +441,6 @@ Built-in features:
 - **Structured audit logging** on every start / stop / error / processed cycle
 - **`--once` / `--interval` / `--dir`** CLI flags via `argparse`
 
-### InboxWatcher (`inbox_watcher.py`)
-
-Concrete Gold Tier watcher. `Inbox/` → `Needs_Action/`.
-
-On each scan cycle:
-1. Globs `Inbox/*.md` (skips `.gitkeep`)
-2. If a file has **no YAML frontmatter** → injects standardised block:
-   ```yaml
-   ---
-   source: inbox
-   ingested_at: "2026-02-19T12:00:00+00:00"
-   watcher: inbox_watcher
-   status: pending
-   ---
-   ```
-3. Writes enriched file to `Needs_Action/<filename>`
-4. Removes original from `Inbox/`
-5. Logs the event to `audit_logger`
-
-### Run locally (infinite loop)
-
-```bash
-# Terminal 1 — watcher polls every 5s, adds frontmatter as tasks arrive
-python inbox_watcher.py
-
-# Terminal 2 — agent processes as tasks appear in Needs_Action/
-python gold_agent.py
-```
-
-Output:
-```
-[inbox_watcher] Starting (polling every 5.0s)
-  [inbox_watcher] q1-review.md → Needs_Action/  (frontmatter added)
-[inbox_watcher] 12:34:56Z — 1 item(s) processed
-```
-
-Custom options:
-```bash
-python inbox_watcher.py --interval 30      # poll every 30s
-python inbox_watcher.py --dir /vault/path  # custom vault root
-```
-
-### Run in GitHub Actions (one-shot)
-
-The workflow runs the watcher as a one-shot step **before** the agent:
-
-```yaml
-- name: Run Inbox Watcher (one-shot, standardize tasks)
-  run: python inbox_watcher.py --once
-
-- name: Run Gold Agent
-  run: python gold_agent.py
-```
-
-The watcher moves and standardizes `Inbox/` → `Needs_Action/`. The agent's internal `stage_inbox()` then finds `Inbox/` empty and processes `Needs_Action/` directly.
-
-### Adding a new watcher
-
-1. Create `my_watcher.py`, subclass `BaseWatcher`
-2. Set `name = "my_watcher"`, implement `run_once() -> int`
-3. Add entry point: `if __name__ == "__main__": MyWatcher.cli(base_dir=BASE_DIR).run()`
-4. Add an optional `--once` step to `gold-agent.yml`
-
 ---
 
 ## Cloud Deployment (GitHub Actions)
@@ -467,63 +455,83 @@ The Gold Agent runs automatically via `.github/workflows/gold-agent.yml`:
 
 ---
 
-## File Structure
+## Hugging Face Spaces Deployment
 
+The `Dockerfile` in this repo is ready for **Hugging Face Spaces — Docker SDK**.
+
+### Prerequisites
+
+- Hugging Face account
+- The following secrets set in your Space settings:
+
+| Secret | Required | Description |
+|--------|----------|-------------|
+| `DATABASE_URL` | Yes | Neon Postgres connection string |
+| `OPENAI_API_KEY` | Yes | OpenAI API key |
+| `INSTAGRAM_ACCESS_TOKEN` | Yes | Meta/Instagram token (any value for demo) |
+| `ALLOWED_ORIGINS` | No | CORS origins (default `*`) |
+
+### Step-by-step
+
+**1. Create a new Space**
+
+Go to [huggingface.co/new-space](https://huggingface.co/new-space) and choose:
+- SDK: **Docker**
+- Visibility: Public or Private
+
+**2. Add this YAML to the top of your Space's `README.md`**
+
+```yaml
+---
+title: AI Employee Vault Gold Cloud
+emoji: 🤖
+colorFrom: yellow
+colorTo: gold
+sdk: docker
+app_port: 7860
+pinned: false
+---
 ```
-AI_Employee_Vault_Gold_Cloud/
-├── gold_agent.py          # Main agent (Ralph Wiggum loop)
-├── base_watcher.py        # Abstract BaseWatcher (loop + backoff + CLI)
-├── inbox_watcher.py       # Gold Tier InboxWatcher (Inbox/ → Needs_Action/)
-├── audit_logger.py        # JSON per-action logging → Logs/ + Neon DB
-├── vault_logger.py        # Daily JSON array + Obsidian run timelines
-├── ceo_briefing.py        # Weekly CEO briefing generator
-├── domain_router.py       # Personal/Business classifier
-├── hitl.py                # HITL detection, approval requests, resume/reject
-├── approve.py             # HITL approval CLI (approve / reject)
-├── mcp_file_ops.py        # MCP Server 1: File operations
-├── mcp_email_ops.py       # MCP Server 2: Email operations
-├── mcp_calendar_ops.py    # MCP Server 3: Calendar/scheduling
-├── mcp_audit_ops.py       # MCP Server 4: Audit queries
-├── watchers/
-│   └── gmail_inbox_watcher.py  # Gmail Inbox Watcher (polls Gmail → Inbox/ tasks)
-├── scripts/
-│   └── run_gmail_watcher.bat   # Windows launcher for Gmail watcher
-├── watcher_inbox.py       # Legacy Silver watcher (preserved)
-├── agent.py               # Legacy Silver agent (preserved)
-├── mcp_server.py          # Legacy Silver MCP server (preserved)
-├── .env.example           # Config template (copy to .env)
-├── .gitignore             # Secrets + runtime files excluded
-├── requirements.txt       # Python dependencies
-│
-├── Dashboard.md           # Obsidian home note (start here)
-├── Index.md               # Complete vault table of contents
-├── Company_Handbook.md    # Procedures, HITL guide, env vars
-├── Business_Goals.md      # OKRs, sprint backlog, key metrics
-├── Templates/             # Obsidian note templates
-│   ├── Daily_Note.md
-│   ├── Task_Note.md
-│   └── HITL_Review.md
-│
-├── Inbox/                 # Drop tasks here (watcher picks up)
-├── Needs_Action/          # Agent working queue
-├── Done/                  # Completed & AI-summarized tasks
-├── Personal/              # Personal-domain routed copies
-├── Business/              # Business-domain routed copies
-├── Pending_Approval/      # HITL: held tasks + approval request files
-├── Approved/              # HITL: human-approved (agent resumes on next run)
-├── Rejected/              # HITL: human-rejected (agent archives)
-├── Briefings/             # Weekly CEO briefings (Obsidian-linked)
-├── Plans/                 # AI-generated task plans
-├── Logs/                  # Per-action JSON files + daily JSON arrays
-│   └── Runs/              # Per-run Obsidian timelines (run_<id>.md)
-├── backend/               # SQLAlchemy + Neon DB layer
-│   ├── db.py
-│   ├── models.py
-│   └── init_db.py
-├── specs/                 # Tier requirement docs
-├── skills/                # Claude Code skill definitions
-└── .github/workflows/
-    └── gold-agent.yml     # CI/CD: watcher + agent + commit
+
+**3. Push the code**
+
+```bash
+# Clone your new HF Space
+git clone https://huggingface.co/spaces/<your-username>/<your-space-name>
+cd <your-space-name>
+
+# Copy this repo's files in
+cp -r /path/to/AI_Employee_Vault_Gold_Cloud/. .
+
+# Add the HF YAML header to the top of README.md (see step 2 above)
+
+# Push
+git add .
+git commit -m "Initial deployment — Gold Cloud FastAPI"
+git push
+```
+
+**4. Set secrets in Space settings**
+
+Go to **Space Settings → Repository secrets** and add:
+- `DATABASE_URL`
+- `OPENAI_API_KEY`
+- `INSTAGRAM_ACCESS_TOKEN`
+
+**5. Space is live**
+
+HF Spaces builds the Docker image and starts the server. Your API is available at:
+```
+https://<your-username>-<your-space-name>.hf.space/docs
+https://<your-username>-<your-space-name>.hf.space/health
+```
+
+### Local Docker test
+
+```bash
+docker build -t vault-gold .
+docker run -p 7860:7860 --env-file .env vault-gold
+# API docs: http://localhost:7860/docs
 ```
 
 ---
@@ -573,55 +581,15 @@ python tools/load_demo_task.py --list
 # Load the Odoo scenario (auto-triggers, no HITL needed)
 python tools/load_demo_task.py odoo
 python gold_agent.py
-# Check: Done/<timestamp>_odoo_invoice_check.md
-# Check: Logs/Runs/run_*_mcp_report.json  (odoo_list_invoices call logged)
 
 # Load the Gmail draft demo (triggers HITL)
 python tools/load_demo_task.py gmail
 python gold_agent.py             # agent pauses — task held in Pending_Approval/
-python approve.py                # list pending approvals
-python approve.py hitl_<ts>_gmail_draft_demo.md   # approve
-python gold_agent.py             # agent resumes — email_send dispatched (dry-run)
-
-# Load the browser screenshot demo (triggers HITL)
-python tools/load_demo_task.py browser
-python gold_agent.py             # agent pauses — browser_action HITL request
-python approve.py                # list pending approvals
-python approve.py hitl_<ts>_browser_screenshot_demo.md
-python gold_agent.py             # agent resumes — browser_action stub runs
+curl http://localhost:8000/hitl/pending    # list via API
+python approve.py                          # or list via CLI
+python approve.py hitl_<ts>_gmail_draft_demo.md
+python gold_agent.py             # agent resumes
 ```
-
-Or use the Makefile shortcuts:
-
-```bash
-make demo-odoo      # loads + instructs you to run gold_agent
-make demo-gmail
-make demo-browser
-make demo-list      # prints the scenario table
-```
-
-### What each scenario demonstrates
-
-**`odoo_invoice_check.md`** — the automatic Odoo path:
-- Keywords `invoice`, `accounting`, `receivable` trigger `should_trigger_odoo()` in the agent
-- `odoo_list_invoices` is called via MCP router before OpenAI summarization
-- No human approval required; task goes straight to `Done/`
-- In DRY_RUN mode returns simulated data (INV/2026/00001, ACME Corp, $1500)
-- Set `MCP_DRY_RUN=false` with real Odoo credentials for live results — see `docs/ODOO_SETUP.md`
-
-**`gmail_draft_demo.md`** — the HITL email path:
-- Keyword `send email` triggers HITL (action type: `email_send`)
-- Agent writes `Pending_Approval/hitl_<ts>_gmail_draft_demo.md` and pauses
-- Human reviews and approves with `python approve.py`
-- On next agent run: task resumes, `email_mcp_stub.handle_email_send` dispatched
-- With Gmail OAuth configured (`token.json`), `gmail_mcp_server.draft_email` creates a real draft — see `docs/GMAIL_SETUP.md`
-
-**`browser_screenshot_demo.md`** — the HITL browser path:
-- Keywords `submit form` + `auto-click` trigger HITL (action type: `browser_action`)
-- Agent writes `Pending_Approval/hitl_<ts>_browser_screenshot_demo.md` and pauses
-- Human reviews and approves with `python approve.py`
-- On next agent run: `browser_mcp_stub.handle_browser_action` dispatched (dry-run)
-- Set `MCP_DRY_RUN=false` + install Playwright for real browser execution
 
 ---
 
@@ -634,273 +602,115 @@ even when `MCP_DRY_RUN=false`.  All actions are logged to `Logs/` as JSON.
 ### Run the demo in 3 commands
 
 ```bash
-# Step 1 — drop a demo task into Inbox
 python tools/load_demo_task.py facebook_post_demo
-
-# Step 2 — run Gold Agent (HITL + MCP dispatch)
 python gold_agent.py
-
-# Step 3 — generate judge-ready evidence pack
 python tools/generate_evidence_pack.py
 ```
-
-### What this demonstrates
-
-- `social_post_facebook`, `social_post_instagram`, `social_post_twitter`, `social_get_analytics`
-  are all registered in the MCP registry (verified live in `Evidence/REGISTERED_MCP_TOOLS.json`).
-- `DRY_RUN=true` (default): returns `dry_run_logged` + writes JSON to `Logs/`.
-- `DRY_RUN=false`: `social_safety_gate` fires → returns `blocked_live_mode` (no real call).
-- Full end-to-end dry-run proof in `Evidence/SOCIAL_DEMO.md`.
-
-### Available social demo scenarios
-
-```bash
-python tools/load_demo_task.py --list        # show all scenarios
-python tools/load_demo_task.py facebook_post_demo
-python tools/load_demo_task.py instagram_post_demo
-python tools/load_demo_task.py twitter_post_demo
-```
-
-See `docs/SOCIAL_DEMO.md` for the full 60-second walkthrough.
 
 ---
 
 ## Scheduled Audit (Daily)
-
-The daily audit runner reads all `Logs/*.json` entries and produces a human-readable
-Markdown report plus a machine-readable JSON evidence snapshot.
-
-### Run manually
 
 ```bash
 python scripts/run_daily_audit.py
 ```
 
 Outputs:
-- `Business/Reports/DAILY_AUDIT_<date>.md` — executive summary with success rate, top servers/actions, hourly heatmap, error list
-- `Evidence/DAILY_AUDIT_<date>.json` — full stats snapshot for CI / judge review
-
-### Options
-
-```bash
-# Audit a specific date
-python scripts/run_daily_audit.py --date 2026-02-24
-
-# Backfill — audit every date found in Logs/
-python scripts/run_daily_audit.py --all
-```
-
-### Cron schedule (Linux/Mac)
-
-```cron
-# Run at 00:05 UTC daily
-5 0 * * * cd /path/to/vault && python scripts/run_daily_audit.py >> /tmp/vault_audit.log 2>&1
-```
+- `Business/Reports/DAILY_AUDIT_<date>.md` — executive summary
+- `Evidence/DAILY_AUDIT_<date>.json` — full stats snapshot
 
 ---
 
 ## X (Twitter) API v2 Integration
 
-> **Requires an X Developer App with `tweet.write` scope.**
 > `MCP_DRY_RUN=true` (default) simulates tweets — no X API calls made.
-
-### Environment variable
 
 ```ini
 X_BEARER_TOKEN=AAAAAAAAxxxxx...   # OAuth 2.0 user access token (tweet.write)
 ```
 
-Generate at **X Developer Portal → Projects & Apps → Keys and Tokens**.
-The token must have the `tweet.write` scope (user-context OAuth 2.0 with PKCE,
-not app-only Bearer Token which is read-only).
-
-### Enable real calls
-
-```bash
-export MCP_DRY_RUN=false
-```
-
-### Example command
-
-```bash
-python -c "
-from mcp.router import dispatch_action
-r = dispatch_action('social_post_twitter', {
-    'text': 'Shipped: AI Employee Vault Gold Tier is live! #AIEmployee #GoldTier',
-    'task_file': 'launch-tweet.md'
-})
-print(r)
-"
-```
-
-### Endpoint
-
-`POST https://api.twitter.com/2/tweets` — JSON body `{"text": "..."}`,
-`Authorization: Bearer <X_BEARER_TOKEN>`. Auto-truncates to 280 chars.
-Full API response JSON is written to `Logs/*.json` on every call.
-
 ---
 
 ## Meta (Facebook/Instagram) Integration
 
-> **Requires a Meta Developer App with a Page-level access token.**
 > `MCP_DRY_RUN=true` (default) simulates all posts — no Meta API calls made.
 
-### Environment variables
-
 ```ini
-META_ACCESS_TOKEN=EAAxxxxx...   # Page-level access token
-META_PAGE_ID=123456789          # Numeric Facebook Page ID
-META_IG_USER_ID=987654321       # Instagram Business account user ID (IG posts only)
+META_ACCESS_TOKEN=EAAxxxxx...
+META_PAGE_ID=123456789
+META_IG_USER_ID=987654321
 ```
-
-Generate a token at: **Facebook Developer Console → Graph API Explorer →
-select your App + Page → Get Page Access Token**.
-
-For a long-lived token (60 days):
-```bash
-# Exchange short-lived user token for long-lived page token
-curl "https://graph.facebook.com/v18.0/oauth/access_token?\
-  grant_type=fb_exchange_token&client_id=APP_ID&client_secret=APP_SECRET\
-  &fb_exchange_token=SHORT_LIVED_TOKEN"
-```
-
-### Enable real calls
-
-```bash
-export MCP_DRY_RUN=false
-```
-
-### Command examples
-
-```bash
-# 1. Post text to Facebook Page feed
-python -c "
-from mcp.router import dispatch_action
-r = dispatch_action('social_post_facebook', {
-    'content': 'Excited to announce our Q1 results! #AIEmployee',
-    'task_file': 'q1-announcement.md'
-})
-print(r)
-"
-
-# 2. Post photo to Instagram Business account
-python -c "
-from mcp.router import dispatch_action
-r = dispatch_action('social_post_instagram', {
-    'image_url': 'https://example.com/banner.jpg',
-    'caption':   'New product launch — link in bio. #GoldTier',
-    'task_file': 'ig-launch.md'
-})
-print(r)
-"
-
-# 3. Fetch real Meta Page insights
-python -c "
-from mcp.router import dispatch_action
-r = dispatch_action('social_get_analytics', {'platform': 'facebook', 'period': 'day'})
-print(r)
-"
-```
-
-### Audit logs
-
-Every API request and response is written to `Logs/*.json`:
-
-```bash
-ls -lt Logs/ | head -5
-```
-
-Each entry includes: `timestamp`, `action`, `request` payload, `response`
-(post ID or error), `success`.
-
-### HITL approval
-
-Social posts (`social_post_facebook`, `social_post_instagram`) are classified
-as sensitive actions and routed through `Pending_Approval/` before dispatch.
-The stub receives the call only after a human approves the task file.
-
-### Notes
-
-- `social_post_twitter` is registered for backward compatibility but returns
-  a simulated result (X API credentials not configured in this release).
-- `social_get_analytics` falls back to `"result": "not_available"` if the
-  token lacks `read_insights` permission — it never crashes.
-- Instagram posts **require** a public `image_url`. Text-only IG posts are
-  not supported by the Meta Content Publishing API.
 
 ---
 
 ## Real Odoo (JSON-RPC) Integration
 
-> **Requires a local Odoo 19 Community instance running at `http://localhost:8069`.**
 > When `MCP_DRY_RUN=true` (default) all calls are simulated — no Odoo needed.
-
-### Environment variables
-
-Add these to your `.env` (copy from `.env.example`):
 
 ```ini
 ODOO_URL=http://localhost:8069
-ODOO_DB=mycompany          # Database name (Settings > General > Database)
-ODOO_USERNAME=admin        # Login email / username
-ODOO_PASSWORD=admin        # Password or API key
+ODOO_DB=mycompany
+ODOO_USERNAME=admin
+ODOO_PASSWORD=admin
 ```
 
-### Enable real calls
+---
 
-```bash
-export MCP_DRY_RUN=false
+## File Structure
+
 ```
-
-### Command examples
-
-```bash
-# 1. Create a contact (res.partner)
-python -c "
-from mcp.router import dispatch_action
-r = dispatch_action('odoo_create_partner', {
-    'name': 'Acme Corp', 'email': 'billing@acme.com', 'phone': '+1-555-0100'
-})
-print(r)
-"
-
-# 2. Create a customer invoice (account.move out_invoice)
-python -c "
-from mcp.router import dispatch_action
-r = dispatch_action('odoo_create_invoice', {
-    'partner_id': 1,
-    'lines': [{'name': 'Consulting Q1', 'quantity': 10, 'price_unit': 150.0}],
-    'currency': 'USD'
-})
-print(r)
-"
-
-# 3. List recent invoices
-python -c "
-from mcp.router import dispatch_action
-r = dispatch_action('odoo_list_invoices', {'limit': 5, 'state': 'posted'})
-for inv in r.get('invoices', []): print(inv)
-"
+AI_Employee_Vault_Gold_Cloud/
+├── main.py                # FastAPI entry point (uvicorn main:app)
+├── Dockerfile             # HF Spaces / Docker deployment
+├── .dockerignore          # Excludes secrets + venv from Docker image
+├── requirements.txt       # Python dependencies (fastapi, uvicorn, sqlalchemy…)
+├── .env.example           # Config template (copy to .env)
+│
+├── backend/               # DB layer + REST API routers
+│   ├── __init__.py
+│   ├── db.py              # SQLAlchemy engine + SessionLocal (Neon Postgres)
+│   ├── models.py          # ORM: Task, AgentRun, Event
+│   ├── init_db.py         # Schema creation script
+│   └── routers/           # FastAPI APIRouter modules
+│       ├── __init__.py
+│       ├── agent.py       # POST /agent/run, GET /agent/status
+│       ├── hitl.py        # GET /hitl/pending, POST /hitl/approve|reject
+│       ├── approve.py     # POST /approve/apply, GET /approve/help
+│       ├── mcp.py         # GET /mcp/tools, POST /mcp/execute
+│       └── inbox.py       # GET /inbox/tasks, POST /inbox/add
+│
+├── gold_agent.py          # Main agent (Ralph Wiggum loop)
+├── base_watcher.py        # Abstract BaseWatcher (loop + backoff + CLI)
+├── inbox_watcher.py       # Gold Tier InboxWatcher (Inbox/ → Needs_Action/)
+├── audit_logger.py        # JSON per-action logging → Logs/ + Neon DB
+├── ceo_briefing.py        # Weekly CEO briefing generator
+├── domain_router.py       # Personal/Business classifier
+├── hitl.py                # HITL detection, approval requests, resume/reject
+├── approve.py             # HITL approval CLI (approve / reject)
+├── mcp_file_ops.py        # MCP Server 1: File operations
+├── mcp_email_ops.py       # MCP Server 2: Email operations
+├── mcp_calendar_ops.py    # MCP Server 3: Calendar/scheduling
+├── mcp_audit_ops.py       # MCP Server 4: Audit queries
+│
+├── watchers/
+│   └── gmail_inbox_watcher.py
+├── scripts/
+│   └── run_gmail_watcher.bat
+│
+├── Inbox/                 # Drop tasks here (watcher picks up)
+├── Needs_Action/          # Agent working queue
+├── Done/                  # Completed & AI-summarized tasks
+├── Personal/              # Personal-domain routed copies
+├── Business/              # Business-domain routed copies
+├── Pending_Approval/      # HITL: held tasks + approval request files
+├── Approved/              # HITL: human-approved
+├── Rejected/              # HITL: human-rejected
+├── Briefings/             # Weekly CEO briefings
+├── Logs/                  # Per-action JSON files
+├── Evidence/              # Judge-ready evidence pack
+└── .github/workflows/
+    └── gold-agent.yml     # CI/CD: watcher + agent + commit
 ```
-
-### Audit logs
-
-Every request **and** response is written as a structured JSON file in `Logs/`:
-
-```bash
-ls -lt Logs/ | head -5       # newest entries first
-cat Logs/<timestamp>_*.json  # inspect a single RPC audit record
-```
-
-Each log entry contains: `timestamp`, `server`, `action`, `request` payload, `response` (or `error`), `success`.
-
-### Transport details
-
-- Protocol: **JSON-RPC 2.0** over HTTP POST to `<ODOO_URL>/jsonrpc`
-- No third-party libraries — stdlib `urllib` only
-- Authentication: `common/authenticate` → cached UID → `object/execute_kw`
-- `ODOO_USER` is also accepted as a legacy alias for `ODOO_USERNAME`
 
 ---
 
@@ -910,7 +720,7 @@ Each log entry contains: `timestamp`, `server`, `action`, `request` payload, `re
 |------|----------|
 | **Bronze** | Vault + 1 watcher + Claude Code processing |
 | **Silver** | OpenAI integration + MCP server + GitHub Actions cloud |
-| **Gold** | Cross-domain + 4 MCP servers + CEO briefing + audit logs + autonomous loop + error recovery |
+| **Gold** | Cross-domain + 4 MCP servers + CEO briefing + audit logs + autonomous loop + FastAPI REST API + HF Spaces Docker deployment |
 
 ---
 
