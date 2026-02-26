@@ -773,4 +773,28 @@ AI_Employee_Vault_Gold_Cloud/
 
 ---
 
+## 🔐 Production Security
+
+| Layer | Control |
+|-------|---------|
+| **Secrets management** | All API keys and DB credentials stored in HF Spaces repository secrets — never in code |
+| **`.env` exclusion** | `.env` is listed in `.gitignore`; a safe `.env.example` template is committed instead |
+| **Docker image hygiene** | `.dockerignore` excludes `.env`, `credentials.json`, `token.json`, `venv/`, `.git/` — secrets are injected at runtime only |
+| **MCP tool whitelist** | `POST /mcp/execute` only runs tools explicitly registered in the MCP registry — unknown tool names are rejected with `400` |
+| **Path traversal blocking** | MCP file operations validate all folder arguments against a hardcoded whitelist of vault folders; `../` and absolute paths are rejected |
+| **HITL gate** | Tasks containing sensitive keywords (`send email`, `payment`, `deploy to prod`, `delete all`, etc.) are paused in `Pending_Approval/` and require explicit human approval before execution resumes |
+| **Graceful degradation** | If `OPENAI_API_KEY` is missing or the API call fails, the agent logs the error and continues processing remaining tasks — no hard crash |
+
+### Key files enforcing these controls
+
+| File | What it protects |
+|------|-----------------|
+| `.gitignore` | Prevents `.env`, `token.json`, `credentials.json` from ever being committed |
+| `.dockerignore` | Strips secrets and dev artifacts from the Docker image |
+| `backend/routers/mcp.py` | Whitelist check + path traversal guard on every `/mcp/execute` call |
+| `hitl.py` | Keyword scanner that intercepts sensitive actions before execution |
+| `audit_logger.py` | Every action written to `/Logs` and Neon DB — full tamper-evident trail |
+
+---
+
 *Built for Hackathon 0 by Mehreen*
