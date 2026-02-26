@@ -8,8 +8,8 @@
   <img src="https://img.shields.io/badge/HITL-Enabled-FF6B35?style=flat-square&logo=shield&logoColor=white" alt="HITL"/>
   <img src="https://img.shields.io/badge/MCP-4%20Servers-10B981?style=flat-square&logo=server&logoColor=white" alt="MCP"/>
   <img src="https://img.shields.io/badge/Audit-JSON%20%2B%20Neon%20DB-6366F1?style=flat-square&logo=postgresql&logoColor=white" alt="Audit"/>
-  <img src="https://img.shields.io/badge/FastAPI-REST%20API-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI"/>
-  <img src="https://img.shields.io/badge/HuggingFace-Spaces-FFD21E?style=flat-square&logo=huggingface&logoColor=black" alt="HuggingFace"/>
+  <img src="https://img.shields.io/badge/FastAPI-15%20Endpoints-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI"/>
+  <img src="https://img.shields.io/badge/HuggingFace-Spaces%20Ready-FFD21E?style=flat-square&logo=huggingface&logoColor=black" alt="HuggingFace"/>
   <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python"/>
   <img src="https://img.shields.io/badge/License-MIT-22c55e?style=flat-square" alt="License"/>
 </p>
@@ -18,7 +18,7 @@
 
 A fully autonomous AI Employee that processes tasks from email or manual input, classifies them across **Personal** and **Business** domains, summarizes them with OpenAI, and loops until everything is done — then generates a **Weekly CEO Briefing**.
 
-Built on 4 MCP servers, a production FastAPI REST API, comprehensive JSON audit logging, error recovery with graceful degradation, and a **Ralph Wiggum autonomous loop** ("I'm in danger!") that keeps running until all tasks reach `Done/`.
+Built on 4 MCP servers, a production FastAPI REST API with 15 endpoints, comprehensive JSON audit logging, error recovery with graceful degradation, and a **Ralph Wiggum autonomous loop** that keeps running until all tasks reach `Done/`.
 
 ---
 
@@ -88,97 +88,483 @@ Gmail / Manual Input
 | **Cross-Domain Integration** | Tasks auto-classified as Personal or Business via keyword scoring + header detection |
 | **4 MCP Servers** | `file_ops`, `email_ops`, `calendar_ops`, `audit_ops` — each with dedicated tools |
 | **Ralph Wiggum Loop** | Autonomous loop keeps processing until `Needs_Action/` is empty or MAX_LOOPS hit |
-| **HITL Approval Workflow** | Sensitive tasks (email send, payment, deploy, publish) paused in `Pending_Approval/` with YAML-frontmatter approval requests |
+| **HITL Approval Workflow** | Sensitive tasks paused in `Pending_Approval/` with YAML-frontmatter approval requests |
 | **CEO Weekly Briefing** | Auto-generated markdown briefing with task counts, domain splits, error rates |
 | **JSON Audit Logging** | Every action logged as individual JSON file in `/Logs` with timestamp, server, details |
 | **Neon DB Audit Trail** | All events + agent run stats persisted to Postgres `agent_runs` + `events` tables |
 | **Error Recovery** | Failed tasks retry up to MAX_RETRIES, then move to Done with error status |
-| **Gmail Inbox Watcher** | `watchers/gmail_inbox_watcher.py` polls Gmail, converts unread emails to `Inbox/` task files; safe DRY_RUN=true default |
+| **Gmail Inbox Watcher** | Polls Gmail, converts unread emails to `Inbox/` task files; safe DRY_RUN=true default |
 | **Docker / HF Spaces** | Single `Dockerfile` deploys on Hugging Face Spaces (Docker SDK) — port 7860 |
 
 ---
 
-## REST API — Cloud Proof
+## A) Live Local Run
 
-The FastAPI backend is live with **15 endpoints** across 5 routers, all visible in the interactive Swagger UI at `/docs`.
+### Step 1 — Install dependencies
 
-### Start the server
+```bash
+git clone https://github.com/Mehreen676/AI_Employee_Vault_Gold_Hackathon0.git
+cd AI_Employee_Vault_Gold_Hackathon0
+pip install -r requirements.txt
+```
+
+### Step 2 — Configure environment
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and set at minimum:
+
+```ini
+DATABASE_URL=postgresql://user:password@host/database?sslmode=require
+OPENAI_API_KEY=sk-...
+INSTAGRAM_ACCESS_TOKEN=any-non-empty-value
+```
+
+> ⚠️ **Never commit `.env` to git.** It is listed in `.gitignore`. All secrets stay local or in Secrets managers.
+
+### Step 3 — Start the server
 
 ```bash
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-Open **http://localhost:8000/docs** to explore and test every endpoint interactively.
+Expected startup output:
 
-### Endpoint Reference
+```
+INFO:     Started server process
+INFO:     Waiting for application startup.
+INFO:     vault | Running create_all against Neon Postgres …
+INFO:     vault | Schema ready.
+INFO:     vault | AI Employee Vault is online.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+```
 
-| Method | Path | Router | Description |
-|--------|------|--------|-------------|
-| `GET` | `/` | General | Service info + version |
-| `GET` | `/health` | General | Health check — DB + env var status |
-| `GET` | `/docs` | — | Swagger UI (interactive docs) |
-| `GET` | `/redoc` | — | ReDoc API reference |
-| `POST` | `/agent/run` | Agent | Trigger agent run — returns **202 Accepted** |
-| `GET` | `/agent/status` | Agent | Latest `AgentRun` stats from Neon DB |
-| `GET` | `/hitl/pending` | HITL | List `hitl_*.md` files in `Pending_Approval/` |
-| `POST` | `/hitl/approve` | HITL | Move file to `Approved/` (agent resumes task) |
-| `POST` | `/hitl/reject` | HITL | Move file to `Rejected/` with reason |
-| `POST` | `/approve/apply` | Approval | Unified approve or reject by `action` field |
-| `GET` | `/approve/help` | Approval | Workflow guide + CLI commands |
-| `GET` | `/mcp/tools` | MCP | List registered MCP tools + schemas |
-| `POST` | `/mcp/execute` | MCP | Execute `list_tasks`, `read_task`, `move_task` |
-| `GET` | `/inbox/tasks` | Inbox | List files currently in `Inbox/` |
-| `POST` | `/inbox/add` | Inbox | Write a new task file to `Inbox/` |
+### Step 4 — Open Swagger UI
 
-### Quick curl proof
+Navigate to **http://localhost:8000/docs**
+
+The Swagger UI loads automatically and shows all **15 endpoints** grouped under 6 tags:
+`General` · `Agent` · `HITL` · `Approval` · `MCP` · `Inbox`
+
+Every endpoint is expandable — click **Try it out** to send live requests directly from the browser.
+
+### Step 5 — Verify health
 
 ```bash
-# 1. Root
-curl http://localhost:8000/
-
-# 2. Health check
 curl http://localhost:8000/health
+```
 
-# 3. Agent status (reads from Neon DB)
-curl http://localhost:8000/agent/status
+**Expected output when DB is connected:**
 
-# 4. List pending HITL approvals
-curl http://localhost:8000/hitl/pending
+```json
+{
+  "status": "healthy",
+  "checks": {
+    "database": "connected",
+    "openai_key_set": true,
+    "instagram_token_set": true
+  }
+}
+```
 
-# 5. Approve a HITL request
-curl -X POST http://localhost:8000/hitl/approve \
-  -H "Content-Type: application/json" \
-  -d '{"filename": "hitl_20260226_120000_task.md"}'
+HTTP `200 OK` — all systems green.
 
-# 6. List MCP tools
-curl http://localhost:8000/mcp/tools
+**Expected output when DATABASE_URL is missing:**
 
-# 7. List tasks in Inbox/
-curl http://localhost:8000/inbox/tasks
+```json
+{
+  "status": "degraded",
+  "checks": {
+    "database": "unavailable",
+    "openai_key_set": false,
+    "instagram_token_set": false
+  }
+}
+```
 
-# 8. Add a task to Inbox/
-curl -X POST http://localhost:8000/inbox/add \
-  -H "Content-Type: application/json" \
-  -d '{"filename": "test-api-task.md", "content": "Review Q4 numbers and prepare summary."}'
+HTTP `503 Service Unavailable` — DB is considered critical.
 
-# 9. Trigger agent run (202 Accepted)
-curl -X POST http://localhost:8000/agent/run \
+---
+
+## B) API Endpoints (as seen in Swagger)
+
+All 15 endpoints grouped by Swagger tag. Every route is registered in `main.py` via `app.include_router()` from `backend/routers/`.
+
+### General
+
+| Method | Path | Description | Example response |
+|--------|------|-------------|-----------------|
+| `GET` | `/` | Service info — name, version, status, docs link | `{"service": "AI Employee Vault — Gold Cloud", "version": "1.0.0", "status": "running", "docs": "/docs"}` |
+| `GET` | `/health` | DB + env var health check. `200` = healthy, `503` = degraded | `{"status": "healthy", "checks": {"database": "connected", ...}}` |
+
+### Agent
+
+| Method | Path | Description | Body / Response |
+|--------|------|-------------|----------------|
+| `POST` | `/agent/run` | Trigger an agent run. Returns **202 Accepted** immediately. Wire to a task queue for async execution. | Body: `{"mode": "once", "max_loops": 1}` → `{"status": "accepted", "triggered_at": "..."}` |
+| `GET` | `/agent/status` | Latest `AgentRun` record from Neon DB — run ID, timestamp, total run count | `{"status": "idle", "last_run_id": 7, "last_run_at": "2026-02-26T...", "total_runs": 7}` |
+
+### HITL
+
+| Method | Path | Description | Body / Response |
+|--------|------|-------------|----------------|
+| `GET` | `/hitl/pending` | List all `hitl_*.md` files in `Pending_Approval/` with parsed frontmatter | `[{"filename": "hitl_...", "action": "email_send", "task_file": "task.md", "status": "pending_approval"}]` |
+| `POST` | `/hitl/approve` | Move a `hitl_*.md` from `Pending_Approval/` → `Approved/`. Agent resumes task on next run. | Body: `{"filename": "hitl_20260226_120000_task.md"}` → `{"success": true, "message": "Approved..."}` |
+| `POST` | `/hitl/reject` | Move a `hitl_*.md` from `Pending_Approval/` → `Rejected/` with reason. | Body: `{"filename": "hitl_...", "reason": "Too risky"}` → `{"success": true, "message": "Rejected..."}` |
+
+### Approval
+
+| Method | Path | Description | Body / Response |
+|--------|------|-------------|----------------|
+| `POST` | `/approve/apply` | Unified endpoint — set `"action": "approve"` or `"action": "reject"` with optional reason | Body: `{"filename": "hitl_...", "action": "approve"}` → `{"success": true, "action": "approve", "message": "..."}` |
+| `GET` | `/approve/help` | Returns structured workflow guide: all endpoints + CLI commands | `{"description": "...", "endpoints": [...], "cli_usage": [...]}` |
+
+### MCP
+
+| Method | Path | Description | Body / Response |
+|--------|------|-------------|----------------|
+| `GET` | `/mcp/tools` | List all registered MCP tools with name, description, and JSON input schema | `{"count": 3, "tools": [{"name": "list_tasks", ...}, ...]}` |
+| `POST` | `/mcp/execute` | Execute a whitelisted tool. Only vault folders are permitted. Path traversal is blocked. | Body: `{"tool": "list_tasks", "arguments": {"folder": "Inbox"}}` → `{"success": true, "result": ["task.md"]}` |
+
+**Available MCP tools via API:**
+
+| Tool | Arguments | What it does |
+|------|-----------|-------------|
+| `list_tasks` | `{"folder": "Inbox"}` | Lists `*.md` files in a vault folder |
+| `read_task` | `{"folder": "Inbox", "filename": "task.md"}` | Reads full file content |
+| `move_task` | `{"filename": "task.md", "from_folder": "Inbox", "to_folder": "Needs_Action"}` | Moves a file between vault folders |
+
+### Inbox
+
+| Method | Path | Description | Body / Response |
+|--------|------|-------------|----------------|
+| `GET` | `/inbox/tasks` | List all `*.md` files currently sitting in `Inbox/` (not yet processed by watcher) | `{"count": 2, "tasks": [{"filename": "task.md", "size_bytes": 128, "preview": "..."}]}` |
+| `POST` | `/inbox/add` | Write a new `*.md` task file to `Inbox/`. YAML frontmatter auto-injected if missing. Returns **201 Created**. | Body: `{"filename": "task.md", "content": "Review Q4..."}` → `{"success": true, "path": "Inbox/task.md"}` |
+
+### Complete curl test suite
+
+```bash
+BASE=http://localhost:8000
+
+# ── General ──────────────────────────────────────────────────────────────────
+curl $BASE/
+curl $BASE/health
+
+# ── Agent ────────────────────────────────────────────────────────────────────
+curl $BASE/agent/status
+curl -X POST $BASE/agent/run \
   -H "Content-Type: application/json" \
   -d '{"mode": "once", "max_loops": 1}'
 
-# 10. Approval help guide
-curl http://localhost:8000/approve/help
+# ── HITL ─────────────────────────────────────────────────────────────────────
+curl $BASE/hitl/pending
+curl -X POST $BASE/hitl/approve \
+  -H "Content-Type: application/json" \
+  -d '{"filename": "hitl_20260226_120000_task.md"}'
+curl -X POST $BASE/hitl/reject \
+  -H "Content-Type: application/json" \
+  -d '{"filename": "hitl_20260226_120000_task.md", "reason": "Too risky"}'
+
+# ── Approval ─────────────────────────────────────────────────────────────────
+curl $BASE/approve/help
+curl -X POST $BASE/approve/apply \
+  -H "Content-Type: application/json" \
+  -d '{"filename": "hitl_20260226_120000_task.md", "action": "approve"}'
+
+# ── MCP ──────────────────────────────────────────────────────────────────────
+curl $BASE/mcp/tools
+curl -X POST $BASE/mcp/execute \
+  -H "Content-Type: application/json" \
+  -d '{"tool": "list_tasks", "arguments": {"folder": "Inbox"}}'
+curl -X POST $BASE/mcp/execute \
+  -H "Content-Type: application/json" \
+  -d '{"tool": "read_task", "arguments": {"folder": "Inbox", "filename": "task.md"}}'
+
+# ── Inbox ─────────────────────────────────────────────────────────────────────
+curl $BASE/inbox/tasks
+curl -X POST $BASE/inbox/add \
+  -H "Content-Type: application/json" \
+  -d '{"filename": "test-task.md", "content": "Review Q4 numbers and prepare summary."}'
 ```
 
-### Router files
+### Router source files
 
-| File | Prefix | Router defines |
-|------|--------|----------------|
-| `backend/routers/agent.py` | `/agent` | `POST /run`, `GET /status` |
-| `backend/routers/hitl.py` | `/hitl` | `GET /pending`, `POST /approve`, `POST /reject` |
-| `backend/routers/approve.py` | `/approve` | `POST /apply`, `GET /help` |
-| `backend/routers/mcp.py` | `/mcp` | `GET /tools`, `POST /execute` |
-| `backend/routers/inbox.py` | `/inbox` | `GET /tasks`, `POST /add` |
+| File | Prefix | Endpoints |
+|------|--------|-----------|
+| `backend/routers/agent.py` | `/agent` | `POST /run` · `GET /status` |
+| `backend/routers/hitl.py` | `/hitl` | `GET /pending` · `POST /approve` · `POST /reject` |
+| `backend/routers/approve.py` | `/approve` | `POST /apply` · `GET /help` |
+| `backend/routers/mcp.py` | `/mcp` | `GET /tools` · `POST /execute` |
+| `backend/routers/inbox.py` | `/inbox` | `GET /tasks` · `POST /add` |
+
+---
+
+## C) Cloud Deployment — Hugging Face Spaces
+
+> **Status: not yet deployed.** Follow these steps to go live on HF Spaces.
+
+The repo already contains all required files. No new code is needed.
+
+### Required files (already in repo)
+
+| File | Purpose |
+|------|---------|
+| `Dockerfile` | Builds the Docker image — `python:3.11-slim`, installs deps, exposes **port 7860** |
+| `requirements.txt` | All Python dependencies (`fastapi`, `uvicorn[standard]`, `sqlalchemy`, `psycopg2-binary`, `openai`, …) |
+| `main.py` | FastAPI app entry point — `uvicorn main:app --host 0.0.0.0 --port 7860` |
+| `.env.example` | Template for all required environment variables |
+
+### Environment variables to set in HF Space
+
+> ⚠️ **Never put real secrets in code or README.** Set them only in HF Space Settings → Repository secrets.
+
+| Variable | Required | What it does |
+|----------|----------|-------------|
+| `DATABASE_URL` | **Yes** | Neon Postgres connection string — enables `/health` to return `"database": "connected"` |
+| `OPENAI_API_KEY` | **Yes** | OpenAI key — required for agent AI summaries |
+| `INSTAGRAM_ACCESS_TOKEN` | **Yes** | Meta/Instagram token — can be any non-empty string for demo |
+| `ALLOWED_ORIGINS` | No | CORS allowed origins. Set to `*` for public Spaces or your frontend URL |
+
+### Step-by-step deployment
+
+**Step 1 — Create a new Space on Hugging Face**
+
+1. Go to [huggingface.co/new-space](https://huggingface.co/new-space)
+2. Fill in:
+   - **Space name:** e.g. `ai-employee-vault-gold`
+   - **License:** MIT
+   - **SDK:** `Docker` ← important
+   - **Visibility:** Public or Private
+3. Click **Create Space**
+
+**Step 2 — Configure the Space (HF YAML frontmatter)**
+
+HF Spaces reads the first block of `README.md` to configure the Space.
+When you push to HF, your `README.md` must start with:
+
+```yaml
+---
+title: AI Employee Vault Gold Cloud
+emoji: 🤖
+colorFrom: yellow
+colorTo: gold
+sdk: docker
+app_port: 7860
+pinned: false
+---
+```
+
+> Note: this header is for the HF Space repo only — do not add it to this GitHub repo's README.
+
+**Step 3 — Push the code to your Space**
+
+```bash
+# Clone your new HF Space repo
+git clone https://huggingface.co/spaces/<your-hf-username>/<your-space-name>
+cd <your-space-name>
+
+# Copy this project's files into the Space repo
+cp -r /path/to/AI_Employee_Vault_Gold_Hackathon0/. .
+
+# Prepend the HF YAML header to README.md (see Step 2 above)
+# Edit README.md and add the --- block at the very top
+
+# Commit and push
+git add .
+git commit -m "Initial deployment — Gold Cloud FastAPI on HF Spaces"
+git push
+```
+
+**Step 4 — Set secrets in Space Settings**
+
+In your HF Space:
+1. Go to **Settings** tab → **Repository secrets**
+2. Add each secret:
+   - `DATABASE_URL` → your Neon Postgres connection string
+   - `OPENAI_API_KEY` → your OpenAI API key
+   - `INSTAGRAM_ACCESS_TOKEN` → your token (or any placeholder)
+3. Click **Save** — the Space rebuilds automatically
+
+**Step 5 — Wait for build and verify**
+
+HF Spaces builds the Docker image automatically (takes ~2-3 minutes).
+Watch the **Build logs** tab for:
+
+```
+Step 1/5 : FROM python:3.11-slim
+...
+Step 4/5 : EXPOSE 7860
+Step 5/5 : CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
+...
+INFO:     vault | AI Employee Vault is online.
+INFO:     Uvicorn running on http://0.0.0.0:7860
+```
+
+**Step 6 — Confirm live endpoints**
+
+Once the Space shows **Running** status, your API is live at:
+
+```
+https://<your-hf-username>-<your-space-name>.hf.space/docs
+https://<your-hf-username>-<your-space-name>.hf.space/health
+https://<your-hf-username>-<your-space-name>.hf.space/mcp/tools
+```
+
+### Local Docker test (before pushing to HF)
+
+```bash
+# Build the image
+docker build -t vault-gold .
+
+# Run with local .env (secrets stay in the file, not committed)
+docker run -p 7860:7860 --env-file .env vault-gold
+
+# Open:  http://localhost:7860/docs
+# Health: http://localhost:7860/health
+```
+
+### How the Dockerfile works
+
+```dockerfile
+FROM python:3.11-slim          # slim Python base
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt  # install deps
+COPY . .                       # copy application code
+RUN mkdir -p Inbox Needs_Action Done ...            # create vault dirs
+EXPOSE 7860                    # HF Spaces requires this port
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "7860"]
+```
+
+> **Secrets safety:** `.dockerignore` excludes `.env`, `credentials.json`, `token.json`,
+> `venv/`, `.git/` from the Docker image. Secrets are injected at runtime via HF Space secrets, never baked in.
+
+---
+
+## D) Evidence Pack — Cloud Proof
+
+Four items that prove the Gold Tier backend is complete and running.
+
+### Proof 1 — Swagger endpoint list
+
+**What to check:** Open `/docs` — all 15 endpoints visible under 6 tags.
+
+```bash
+# Local
+curl http://localhost:8000/docs          # opens Swagger UI
+
+# On HF Spaces (after deployment)
+curl https://<username>-<space>.hf.space/docs
+```
+
+Expected: Swagger UI loads with tags `General`, `Agent`, `HITL`, `Approval`, `MCP`, `Inbox` and all 15 routes listed and testable.
+
+Screenshot checklist:
+- [ ] `POST /agent/run` visible under **Agent** tag
+- [ ] `GET /hitl/pending` visible under **HITL** tag
+- [ ] `POST /mcp/execute` visible under **MCP** tag
+- [ ] `POST /inbox/add` visible under **Inbox** tag
+
+---
+
+### Proof 2 — Health check: DB connected
+
+**What to check:** `/health` returns `200 OK` with `"database": "connected"`.
+
+```bash
+curl -s http://localhost:8000/health | python -m json.tool
+```
+
+Expected output:
+
+```json
+{
+  "status": "healthy",
+  "checks": {
+    "database": "connected",
+    "openai_key_set": true,
+    "instagram_token_set": true
+  }
+}
+```
+
+HTTP status: `200 OK`
+
+If you see `"database": "unavailable"`, check that `DATABASE_URL` is set correctly in `.env` (local) or in Space secrets (HF).
+
+---
+
+### Proof 3 — GitHub commit history
+
+**What to check:** The commit log shows all router, Dockerfile, and README changes committed and pushed.
+
+```bash
+git log --oneline -10
+```
+
+Expected (most recent first):
+
+```
+24c3c6f Add FastAPI routers, Dockerfile, and HF Spaces deployment config
+71a2ff2 Gold Agent: autonomous task processing + CEO briefing
+...
+485eebd Real X API v2 MCP integration
+94e3999 Real Meta Graph API MCP integration
+85debd2 Real Odoo JSON-RPC MCP integration
+```
+
+Public commit history:
+`https://github.com/Mehreen676/AI_Employee_Vault_Gold_Hackathon0/commits/main`
+
+Key commit to verify: **`24c3c6f`** — adds:
+- `backend/routers/` (5 router files)
+- `main.py` (updated router loading)
+- `Dockerfile` + `.dockerignore`
+- `requirements.txt` (fastapi + uvicorn added)
+
+---
+
+### Proof 4 — HF Spaces /docs link (after deployment)
+
+**What to check:** The live Space serves the FastAPI app on port 7860.
+
+After completing section C deployment:
+
+```
+https://<your-hf-username>-<your-space-name>.hf.space/docs
+```
+
+Verify:
+- [ ] Page loads Swagger UI (not a 404 or build error)
+- [ ] `GET /health` returns `{"status": "healthy", ...}` with `200`
+- [ ] `GET /mcp/tools` returns the 3 registered tools
+- [ ] Space logs show `INFO: vault | AI Employee Vault is online.`
+
+> The Space URL pattern is: `https://<username>-<space-name>.hf.space`
+> Replace hyphens in your Space name with hyphens in the URL.
+
+---
+
+### Generate the full evidence pack
+
+```bash
+python tools/generate_evidence_pack.py
+```
+
+Produces judge-ready files in `Evidence/`:
+
+| File | What it proves |
+|------|----------------|
+| `Evidence/README.md` | Index — what to check and where |
+| `Evidence/ARCHITECTURE.md` | ASCII system diagram + full data flow |
+| `Evidence/PROOF_CHECKLIST.md` | 66-item checklist mapped to exact source files |
+| `Evidence/SAMPLE_RUN.md` | Annotated console output + screenshot placeholders |
+| `Evidence/REGISTERED_MCP_TOOLS.json` | Live dump from `mcp.registry.list_registered()` |
+| `Evidence/LAST_RUN_SUMMARY.json` | Latest run_id, loops, processed, failed, db_events |
+| `Evidence/ODOO_DEMO.md` | Live dry-run proof for all 3 Odoo MCP tools |
 
 ---
 
@@ -214,20 +600,16 @@ cp .env.example .env
 
 ```bash
 uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-# Docs: http://localhost:8000/docs
+# Docs:   http://localhost:8000/docs
 # Health: http://localhost:8000/health
 ```
 
 ### 4. Drop a Task
 
 ```bash
-# Via API
 curl -X POST http://localhost:8000/inbox/add \
   -H "Content-Type: application/json" \
-  -d '{"filename": "q4-report.md", "content": "Review Q4 revenue numbers and prepare executive summary.\nClient: Acme Corp\nDeadline: Friday\nDomain: business"}'
-
-# Or drop a file directly
-echo "# Q4 Report\nReview Q4 numbers." > Inbox/q4-report.md
+  -d '{"filename": "q4-report.md", "content": "Review Q4 revenue numbers and prepare executive summary."}'
 ```
 
 ### 5. Run the Gold Agent
@@ -236,121 +618,44 @@ echo "# Q4 Report\nReview Q4 numbers." > Inbox/q4-report.md
 python gold_agent.py
 ```
 
-You'll see:
-```
-============================================================
-  AI Employee Vault — GOLD TIER Agent
-============================================================
-
---- Loop 1 ---
-  Inbox: 1 file(s) moved to Needs_Action
-  Tasks pending: 1
-  DONE: q4-report.md
-
-  All tasks processed!
-
-CEO Briefing saved: CEO_Briefing_2026-02-26.md
-
-============================================================
-  GOLD AGENT COMPLETE
-  Loops: 1
-  Processed: 1
-  Failed: 0
-============================================================
-```
-
-### 6. (Optional) Gmail Inbox Watcher — Stream Live Emails as Tasks
-
-```bash
-# First-time only: generate OAuth2 token (opens browser)
-py generate_gmail_token.py
-
-# Terminal 1 — watcher polls Gmail every 10 s (DRY_RUN=true by default)
-py watchers/gmail_inbox_watcher.py
-
-# Terminal 2 — agent processes emails that land in Inbox/
-py gold_agent.py
-```
-
-> **DRY_RUN default (`MCP_DRY_RUN=true`):** the watcher creates `Inbox/` task files
-> but does **not** mark emails as read or touch Gmail in any way.
-> To enable mark-read, set in `.env`:
-> ```ini
-> MCP_DRY_RUN=false
-> GMAIL_MARK_READ_ON_PROCESS=true
-> ```
-> See [`docs/GMAIL_WATCHER_SETUP.md`](docs/GMAIL_WATCHER_SETUP.md) for the full setup guide.
-
----
-
-### Diagnostic Tools
-
-```bash
-# MCP Health Report — registered tools, DRY_RUN status, last log timestamp
-python tools/mcp_health_report.py
-# Writes: Evidence/MCP_HEALTH_REPORT.json
-
-# Architecture Diagrams — ASCII + Mermaid
-python tools/generate_architecture_diagram.py
-# Writes: Evidence/ARCH_DIAGRAM.txt
-#         Evidence/ARCH_DIAGRAM.md
-```
-
-### Check Results
-
-```bash
-# Processed task
-cat Done/q4-report.md
-
-# Domain-routed copy
-cat Business/q4-report.md
-
-# CEO Briefing
-cat Briefings/CEO_Briefing_*.md
-
-# Audit logs (JSON per action)
-ls Logs/
-cat Logs/*.json | head -20
-```
-
----
-
-## Demo: Full Pipeline
-
-```bash
-# Step 1: Create multiple tasks (mix of personal + business)
-cat > Inbox/meeting-prep.md << 'EOF'
-# Meeting Prep
-Prepare slides for stakeholder review.
-Budget discussion with vendor.
-EOF
-
-cat > Inbox/grocery-list.md << 'EOF'
-# Grocery Shopping
-Pick up milk, eggs, bread.
-Also need birthday cake for Saturday.
-EOF
-
-# Step 2: Run agent — it processes BOTH, classifies, and loops
-python gold_agent.py
-
-# Step 3: Verify cross-domain routing
-ls Business/    # meeting-prep.md
-ls Personal/    # grocery-list.md
-ls Done/        # both files
-ls Logs/        # JSON audit trail for every action
-cat Briefings/CEO_Briefing_*.md
-```
-
 ---
 
 ## HITL Demo Steps
 
-Human-in-the-Loop approval gates sensitive tasks before they execute.
+**1. Drop a sensitive task**
+```bash
+cat > Inbox/send-campaign.md << 'EOF'
+# Q1 Email Campaign
+Send email blast to all subscribers with the new product announcement.
+EOF
+```
 
-### Sensitive action triggers
+**2. Run agent — it pauses on sensitive content**
+```bash
+python gold_agent.py
+```
 
-The following keywords in a task's content automatically trigger HITL:
+**3. Review + approve via API**
+```bash
+curl http://localhost:8000/hitl/pending
+curl -X POST http://localhost:8000/hitl/approve \
+  -H "Content-Type: application/json" \
+  -d '{"filename": "hitl_20260226_120000_send-campaign.md"}'
+```
+
+**4. Or reject with a reason**
+```bash
+curl -X POST http://localhost:8000/hitl/reject \
+  -H "Content-Type: application/json" \
+  -d '{"filename": "hitl_20260226_120000_send-campaign.md", "reason": "Not ready for launch"}'
+```
+
+**5. Run agent again to complete**
+```bash
+python gold_agent.py
+```
+
+### Sensitive keyword triggers
 
 | Keyword | Action type |
 |---------|------------|
@@ -361,85 +666,6 @@ The following keywords in a task's content automatically trigger HITL:
 | `delete all`, `purge`, `drop table` | `delete` |
 | `submit form`, `click confirm`, `auto-click` | `browser_action` |
 | `slack message`, `webhook` | `notify_external` |
-
-### Step-by-step demo
-
-**1. Drop a sensitive task**
-```bash
-cat > Inbox/send-campaign.md << 'EOF'
-# Q1 Email Campaign
-Send email blast to all subscribers with the new product announcement.
-Subject: "Introducing Gold Tier — April Launch"
-EOF
-```
-
-**2. Run the agent — it detects sensitivity and pauses**
-```bash
-python gold_agent.py
-```
-
-**3a. Review + Approve via API**
-```bash
-# List pending
-curl http://localhost:8000/hitl/pending
-
-# Approve
-curl -X POST http://localhost:8000/hitl/approve \
-  -H "Content-Type: application/json" \
-  -d '{"filename": "hitl_20260226_120000_send-campaign.md"}'
-```
-
-**3b. Review + Reject via API**
-```bash
-curl -X POST http://localhost:8000/hitl/reject \
-  -H "Content-Type: application/json" \
-  -d '{"filename": "hitl_20260226_120000_send-campaign.md", "reason": "Not ready for launch"}'
-```
-
-**3c. Or use the CLI**
-```bash
-python approve.py                                          # list all pending
-python approve.py hitl_20260226_120000_send-campaign.md    # approve
-python approve.py --reject hitl_20260226_120000_send-campaign.md --reason "Not ready"
-```
-
-**4. Run agent again to complete approved tasks**
-```bash
-python gold_agent.py
-```
-
----
-
-## Watcher Architecture
-
-Watchers are modular, cloud-safe components that feed tasks into the pipeline.
-All share a common **`BaseWatcher`** skeleton with two operating modes:
-
-| Mode | Flag | Use case |
-|------|------|----------|
-| **Infinite loop** | *(no flag)* | Local dev — polls `Inbox/` continuously |
-| **One-shot** | `--once` | GitHub Actions / cron — one scan then exit |
-
-### BaseWatcher (`base_watcher.py`)
-
-Abstract base. Subclasses implement one method:
-
-```python
-class MyWatcher(BaseWatcher):
-    name = "my_watcher"
-
-    def run_once(self) -> int:
-        # scan, process, return items-processed count
-        return processed_count
-
-if __name__ == "__main__":
-    MyWatcher.cli(base_dir=BASE_DIR, default_interval=10.0).run()
-```
-
-Built-in features:
-- **Exponential backoff** on consecutive errors (doubles per error, capped at 60s)
-- **Structured audit logging** on every start / stop / error / processed cycle
-- **`--once` / `--interval` / `--dir`** CLI flags via `argparse`
 
 ---
 
@@ -455,116 +681,7 @@ The Gold Agent runs automatically via `.github/workflows/gold-agent.yml`:
 
 ---
 
-## Hugging Face Spaces Deployment
-
-The `Dockerfile` in this repo is ready for **Hugging Face Spaces — Docker SDK**.
-
-### Prerequisites
-
-- Hugging Face account
-- The following secrets set in your Space settings:
-
-| Secret | Required | Description |
-|--------|----------|-------------|
-| `DATABASE_URL` | Yes | Neon Postgres connection string |
-| `OPENAI_API_KEY` | Yes | OpenAI API key |
-| `INSTAGRAM_ACCESS_TOKEN` | Yes | Meta/Instagram token (any value for demo) |
-| `ALLOWED_ORIGINS` | No | CORS origins (default `*`) |
-
-### Step-by-step
-
-**1. Create a new Space**
-
-Go to [huggingface.co/new-space](https://huggingface.co/new-space) and choose:
-- SDK: **Docker**
-- Visibility: Public or Private
-
-**2. Add this YAML to the top of your Space's `README.md`**
-
-```yaml
----
-title: AI Employee Vault Gold Cloud
-emoji: 🤖
-colorFrom: yellow
-colorTo: gold
-sdk: docker
-app_port: 7860
-pinned: false
----
-```
-
-**3. Push the code**
-
-```bash
-# Clone your new HF Space
-git clone https://huggingface.co/spaces/<your-username>/<your-space-name>
-cd <your-space-name>
-
-# Copy this repo's files in
-cp -r /path/to/AI_Employee_Vault_Gold_Cloud/. .
-
-# Add the HF YAML header to the top of README.md (see step 2 above)
-
-# Push
-git add .
-git commit -m "Initial deployment — Gold Cloud FastAPI"
-git push
-```
-
-**4. Set secrets in Space settings**
-
-Go to **Space Settings → Repository secrets** and add:
-- `DATABASE_URL`
-- `OPENAI_API_KEY`
-- `INSTAGRAM_ACCESS_TOKEN`
-
-**5. Space is live**
-
-HF Spaces builds the Docker image and starts the server. Your API is available at:
-```
-https://<your-username>-<your-space-name>.hf.space/docs
-https://<your-username>-<your-space-name>.hf.space/health
-```
-
-### Local Docker test
-
-```bash
-docker build -t vault-gold .
-docker run -p 7860:7860 --env-file .env vault-gold
-# API docs: http://localhost:7860/docs
-```
-
----
-
-## Evidence Pack
-
-Generate a judge-ready `Evidence/` folder in one command:
-
-```bash
-python tools/generate_evidence_pack.py
-# or
-make evidence
-```
-
-This produces:
-
-| File | What it proves |
-|---|---|
-| `Evidence/README.md` | Index — what to check and where |
-| `Evidence/ARCHITECTURE.md` | ASCII system diagram + full data flow |
-| `Evidence/PROOF_CHECKLIST.md` | 66-item checklist mapped to exact source files |
-| `Evidence/SAMPLE_RUN.md` | Annotated console output + screenshot placeholders |
-| `Evidence/REGISTERED_MCP_TOOLS.json` | **Live** dump from `mcp.registry.list_registered()` |
-| `Evidence/LAST_RUN_SUMMARY.json` | Latest run_id, loops, processed, failed, db_events |
-| `Evidence/ODOO_DEMO.md` | **Live** dry-run proof for all 3 Odoo MCP tools |
-
----
-
 ## Demo Scenarios
-
-Three ready-made task files live in `Demo_Scenarios/`. Each demonstrates a different MCP integration path. Use `tools/load_demo_task.py` to copy a scenario into `Inbox/` with a timestamped filename so you can run multiple demos without collisions.
-
-### Available scenarios
 
 | Scenario | File | Triggers | HITL? |
 |---|---|---|---|
@@ -572,39 +689,10 @@ Three ready-made task files live in `Demo_Scenarios/`. Each demonstrates a diffe
 | Gmail draft demo | `Demo_Scenarios/gmail_draft_demo.md` | `draft_email` + `email_send` | Yes |
 | Browser screenshot | `Demo_Scenarios/browser_screenshot_demo.md` | `browser_action` | Yes |
 
-### Load and run a demo
-
 ```bash
-# List all scenarios with trigger descriptions
-python tools/load_demo_task.py --list
-
-# Load the Odoo scenario (auto-triggers, no HITL needed)
-python tools/load_demo_task.py odoo
+python tools/load_demo_task.py --list    # list all
+python tools/load_demo_task.py odoo      # load + run
 python gold_agent.py
-
-# Load the Gmail draft demo (triggers HITL)
-python tools/load_demo_task.py gmail
-python gold_agent.py             # agent pauses — task held in Pending_Approval/
-curl http://localhost:8000/hitl/pending    # list via API
-python approve.py                          # or list via CLI
-python approve.py hitl_<ts>_gmail_draft_demo.md
-python gold_agent.py             # agent resumes
-```
-
----
-
-## Social MCP Demo (Safe Stub)
-
-The `social_mcp_stub` provides a **permanently safe** social media integration.
-No real post is ever sent — a hardcoded `social_safety_gate` blocks live posting
-even when `MCP_DRY_RUN=false`.  All actions are logged to `Logs/` as JSON.
-
-### Run the demo in 3 commands
-
-```bash
-python tools/load_demo_task.py facebook_post_demo
-python gold_agent.py
-python tools/generate_evidence_pack.py
 ```
 
 ---
@@ -613,45 +701,8 @@ python tools/generate_evidence_pack.py
 
 ```bash
 python scripts/run_daily_audit.py
-```
-
-Outputs:
-- `Business/Reports/DAILY_AUDIT_<date>.md` — executive summary
-- `Evidence/DAILY_AUDIT_<date>.json` — full stats snapshot
-
----
-
-## X (Twitter) API v2 Integration
-
-> `MCP_DRY_RUN=true` (default) simulates tweets — no X API calls made.
-
-```ini
-X_BEARER_TOKEN=AAAAAAAAxxxxx...   # OAuth 2.0 user access token (tweet.write)
-```
-
----
-
-## Meta (Facebook/Instagram) Integration
-
-> `MCP_DRY_RUN=true` (default) simulates all posts — no Meta API calls made.
-
-```ini
-META_ACCESS_TOKEN=EAAxxxxx...
-META_PAGE_ID=123456789
-META_IG_USER_ID=987654321
-```
-
----
-
-## Real Odoo (JSON-RPC) Integration
-
-> When `MCP_DRY_RUN=true` (default) all calls are simulated — no Odoo needed.
-
-```ini
-ODOO_URL=http://localhost:8069
-ODOO_DB=mycompany
-ODOO_USERNAME=admin
-ODOO_PASSWORD=admin
+# Output: Business/Reports/DAILY_AUDIT_<date>.md
+#         Evidence/DAILY_AUDIT_<date>.json
 ```
 
 ---
@@ -661,52 +712,41 @@ ODOO_PASSWORD=admin
 ```
 AI_Employee_Vault_Gold_Cloud/
 ├── main.py                # FastAPI entry point (uvicorn main:app)
-├── Dockerfile             # HF Spaces / Docker deployment
-├── .dockerignore          # Excludes secrets + venv from Docker image
-├── requirements.txt       # Python dependencies (fastapi, uvicorn, sqlalchemy…)
-├── .env.example           # Config template (copy to .env)
+├── Dockerfile             # HF Spaces / Docker deployment (port 7860)
+├── .dockerignore          # Excludes .env, venv, .git from image
+├── requirements.txt       # fastapi, uvicorn[standard], sqlalchemy, openai…
+├── .env.example           # Config template — copy to .env, never commit .env
 │
 ├── backend/               # DB layer + REST API routers
-│   ├── __init__.py
 │   ├── db.py              # SQLAlchemy engine + SessionLocal (Neon Postgres)
 │   ├── models.py          # ORM: Task, AgentRun, Event
-│   ├── init_db.py         # Schema creation script
-│   └── routers/           # FastAPI APIRouter modules
-│       ├── __init__.py
-│       ├── agent.py       # POST /agent/run, GET /agent/status
-│       ├── hitl.py        # GET /hitl/pending, POST /hitl/approve|reject
-│       ├── approve.py     # POST /approve/apply, GET /approve/help
-│       ├── mcp.py         # GET /mcp/tools, POST /mcp/execute
-│       └── inbox.py       # GET /inbox/tasks, POST /inbox/add
+│   ├── init_db.py
+│   └── routers/
+│       ├── agent.py       # POST /agent/run  GET /agent/status
+│       ├── hitl.py        # GET /hitl/pending  POST /hitl/approve|reject
+│       ├── approve.py     # POST /approve/apply  GET /approve/help
+│       ├── mcp.py         # GET /mcp/tools  POST /mcp/execute
+│       └── inbox.py       # GET /inbox/tasks  POST /inbox/add
 │
 ├── gold_agent.py          # Main agent (Ralph Wiggum loop)
-├── base_watcher.py        # Abstract BaseWatcher (loop + backoff + CLI)
-├── inbox_watcher.py       # Gold Tier InboxWatcher (Inbox/ → Needs_Action/)
-├── audit_logger.py        # JSON per-action logging → Logs/ + Neon DB
-├── ceo_briefing.py        # Weekly CEO briefing generator
-├── domain_router.py       # Personal/Business classifier
-├── hitl.py                # HITL detection, approval requests, resume/reject
-├── approve.py             # HITL approval CLI (approve / reject)
+├── hitl.py                # HITL detection + approval requests
+├── approve.py             # HITL approval CLI
 ├── mcp_file_ops.py        # MCP Server 1: File operations
 ├── mcp_email_ops.py       # MCP Server 2: Email operations
 ├── mcp_calendar_ops.py    # MCP Server 3: Calendar/scheduling
 ├── mcp_audit_ops.py       # MCP Server 4: Audit queries
+├── audit_logger.py        # JSON per-action logging → Logs/ + Neon DB
+├── domain_router.py       # Personal/Business classifier
+├── ceo_briefing.py        # Weekly CEO briefing generator
 │
-├── watchers/
-│   └── gmail_inbox_watcher.py
-├── scripts/
-│   └── run_gmail_watcher.bat
-│
-├── Inbox/                 # Drop tasks here (watcher picks up)
+├── Inbox/                 # Drop tasks here
 ├── Needs_Action/          # Agent working queue
-├── Done/                  # Completed & AI-summarized tasks
-├── Personal/              # Personal-domain routed copies
-├── Business/              # Business-domain routed copies
-├── Pending_Approval/      # HITL: held tasks + approval request files
-├── Approved/              # HITL: human-approved
-├── Rejected/              # HITL: human-rejected
-├── Briefings/             # Weekly CEO briefings
-├── Logs/                  # Per-action JSON files
+├── Done/                  # Completed tasks
+├── Pending_Approval/      # HITL held tasks
+├── Approved/              # HITL approved
+├── Rejected/              # HITL rejected
+├── Briefings/             # CEO briefings
+├── Logs/                  # Per-action JSON audit files
 ├── Evidence/              # Judge-ready evidence pack
 └── .github/workflows/
     └── gold-agent.yml     # CI/CD: watcher + agent + commit
@@ -720,7 +760,7 @@ AI_Employee_Vault_Gold_Cloud/
 |------|----------|
 | **Bronze** | Vault + 1 watcher + Claude Code processing |
 | **Silver** | OpenAI integration + MCP server + GitHub Actions cloud |
-| **Gold** | Cross-domain + 4 MCP servers + CEO briefing + audit logs + autonomous loop + FastAPI REST API + HF Spaces Docker deployment |
+| **Gold** | Cross-domain + 4 MCP servers + CEO briefing + audit logs + autonomous loop + **FastAPI REST API (15 endpoints)** + **HF Spaces Docker deployment** |
 
 ---
 
