@@ -1,3 +1,13 @@
+---
+title: AI Employee Vault Gold Cloud
+emoji: 🤖
+colorFrom: yellow
+colorTo: yellow
+sdk: docker
+app_port: 8000
+pinned: false
+---
+
 # AI Employee Vault — Gold Tier
 
 > Hackathon 0 | Personal AI Employee with full cross-domain autonomy
