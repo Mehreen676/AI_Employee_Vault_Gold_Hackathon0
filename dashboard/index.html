@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Employee Vault — Gold Tier Dashboard</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ── Header ──────────────────────────────────────────────────── -->
+  <header class="header">
+    <div class="header-brand">
+      <div class="header-icon">🤖</div>
+      <div>
+        <h1>AI Employee Vault — Gold Tier Dashboard</h1>
+        <p>Autonomous Agent Control Panel</p>
+      </div>
+    </div>
+    <div class="status-pill">
+      <span class="status-dot"></span>
+      Live · updated <strong id="last-updated">—</strong>
+    </div>
+  </header>
+
+  <!-- ── Stats grid ──────────────────────────────────────────────── -->
+  <p class="section-label">System Overview</p>
+  <div class="stats-grid">
+
+    <div class="card">
+      <span class="card-icon">💚</span>
+      <p class="card-label">API Health</p>
+      <div id="stat-status">
+        <span class="card-value">—</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-icon">🤖</span>
+      <p class="card-label">Agent Status</p>
+      <div id="stat-agent">
+        <span class="card-value">—</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-icon">⏳</span>
+      <p class="card-label">HITL Pending</p>
+      <div id="stat-hitl">
+        <span class="card-value">—</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-icon">🔧</span>
+      <p class="card-label">MCP Tools</p>
+      <div id="stat-mcp">
+        <span class="card-value">—</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-icon">🔁</span>
+      <p class="card-label">Total Agent Runs</p>
+      <div id="stat-runs">
+        <span class="card-value">—</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="card-icon">⚠️</span>
+      <p class="card-label">Errors</p>
+      <div id="stat-errors">
+        <span class="card-value">—</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── Actions ─────────────────────────────────────────────────── -->
+  <p class="section-label">Quick Actions</p>
+  <div class="actions-row">
+    <button id="btn-swagger" class="btn btn-gold">📄 Open Swagger</button>
+    <button id="btn-health"  class="btn btn-outline">🩺 Health Check</button>
+    <button id="btn-mcp"     class="btn btn-outline">🔧 MCP Tools</button>
+    <button id="btn-agent"   class="btn btn-outline">🤖 Agent Status</button>
+  </div>
+
+  <!-- ── Recent Activity ─────────────────────────────────────────── -->
+  <p class="section-label">Recent Activity</p>
+  <div class="activity-box">
+    <div class="activity-header">
+      <span>Audit Log Feed</span>
+      <span class="badge" id="activity-count">—</span>
+    </div>
+    <ul class="activity-list" id="activity-list">
+      <!-- populated by app.js -->
+    </ul>
+  </div>
+
+  <!-- ── Footer ──────────────────────────────────────────────────── -->
+  <footer class="footer">
+    <span>AI Employee Vault</span> · Gold Tier · Hackathon 0 ·
+    Built by Mehreen · Pure static UI — no frameworks
+  </footer>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
