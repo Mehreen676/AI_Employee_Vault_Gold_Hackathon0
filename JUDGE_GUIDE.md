@@ -47,3 +47,40 @@ curl -X POST http://localhost:8000/accounting/invoice \
 Check:
 - JSON response
 - Logs/accounting.json
+
+## 📈 5. Metrics Endpoint
+
+```bash
+curl http://localhost:8000/metrics
+```
+
+Sample:
+
+```
+vault_agent_runs_total 0
+vault_tasks_processed_total 0
+vault_hitl_pending_total 0
+vault_mcp_tools_registered_total 4
+vault_errors_total 0
+vault_uptime_seconds 123
+```
+
+## 📂 6. Where to See Logs
+
+- Logs/
+- Evidence/
+- run_log.md
+
+## 🖥 7. Dashboard Preview
+
+Open:
+
+```
+dashboard/index.html
+```
+
+## ☁ 8. Cloud Deployment
+
+- HuggingFace Spaces
+- Docker
+- GitHub Actions
