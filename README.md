@@ -25,9 +25,9 @@ Built on 4 MCP servers, a production FastAPI REST API with 15 endpoints, compreh
 
 ## 🎥 Live Demo
 
-![Demo GIF](docs/demo.gif)
+![Gold Demo](docs/gold_demo.gif)
 
-> _Swap `docs/demo.gif` with a real screen recording of the Swagger UI + HITL approval flow._
+> Record Swagger UI + HITL approval flow and save as `docs/gold_demo.gif`
 
 ---
 
