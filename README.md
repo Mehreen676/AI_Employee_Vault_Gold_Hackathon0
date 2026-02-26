@@ -31,6 +31,14 @@ Built on 4 MCP servers, a production FastAPI REST API with 15 endpoints, compreh
 
 ---
 
+## 🖥 Dashboard (Preview)
+
+Open `dashboard/index.html` locally for UI preview.
+
+> Start the API first (`uvicorn main:app --port 8000`), then open the file directly in any browser — no build step required.
+
+---
+
 ## Architecture
 
 ```
