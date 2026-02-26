@@ -35,3 +35,15 @@ Check:
 - JSON response
 - Logs/social_facebook.json
 - Evidence/SOCIAL_FACEBOOK_SUMMARY.json
+
+## 💰 4. How to Test Accounting (Xero Stub)
+
+```bash
+curl -X POST http://localhost:8000/accounting/invoice \
+  -H "Content-Type: application/json" \
+  -d '{"customer":"Judge Corp","amount":500}'
+```
+
+Check:
+- JSON response
+- Logs/accounting.json
