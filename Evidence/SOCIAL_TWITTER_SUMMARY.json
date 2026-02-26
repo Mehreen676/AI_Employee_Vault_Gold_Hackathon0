@@ -1,0 +1,15 @@
+{
+  "platform": "twitter",
+  "posted_message": "AI Employee Vault Gold Tier — autonomous agent, HITL, 4 MCP servers, audit logs, FastAPI REST API. Built for Hackathon 0. #AI #Hackathon #FastAPI",
+  "ai_summary": "[AI Summary] AI Employee Vault Gold Tier — autonomous agent, HITL, 4 MCP servers, audit logs…",
+  "agent_run_id": "181",
+  "timestamp": "2026-02-26T12:01:00+00:00",
+  "status": "success",
+  "tool": "SocialTwitterTool",
+  "source_file": "mcp_social_twitter.py",
+  "api_endpoint": "POST /social/twitter",
+  "log_file": "Logs/social_twitter.json",
+  "char_count": 138,
+  "char_limit": 280,
+  "note": "Demonstration evidence — stub post, no real Bearer Token used. Replace _TWITTER_BEARER_TOKEN in mcp_social_twitter.py for live deployment."
+}
