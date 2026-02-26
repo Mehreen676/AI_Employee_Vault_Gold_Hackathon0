@@ -646,6 +646,22 @@ Produces judge-ready files in `Evidence/`:
 
 ---
 
+## 🧠 MCP Tool Architecture
+
+```mermaid
+flowchart TD
+    Agent --> MCP_File
+    Agent --> MCP_Email
+    Agent --> MCP_Calendar
+    Agent --> MCP_Audit
+    MCP_File --> Logs
+    MCP_Email --> Inbox
+    MCP_Calendar --> Schedule
+    MCP_Audit --> JSON_Audit
+```
+
+---
+
 ## MCP Servers
 
 | Server | File | Tools |
