@@ -73,7 +73,20 @@ vault_uptime_seconds 123
 
 ## 🖥 7. Dashboard Preview
 
-Open:
+### Option A — Live (GitHub Pages)
+
+Open the public dashboard directly in any browser — no local server needed:
+
+```
+https://mehreen676.github.io/AI_Employee_Vault_Gold_Hackathon0/
+```
+
+The dashboard polls the HuggingFace backend and displays live stats.
+If the API is offline, every card shows **"Offline"** (no crash, graceful degradation).
+
+### Option B — Local
+
+Start the API first, then open the file:
 
 ```
 dashboard/index.html
@@ -84,3 +97,22 @@ dashboard/index.html
 - HuggingFace Spaces
 - Docker
 - GitHub Actions
+
+## 🌐 9. GitHub Pages Dashboard Setup
+
+To activate the live dashboard on a fork or re-deployment:
+
+1. Go to the GitHub repo → **Settings**
+2. Click **Pages** in the left sidebar
+3. Under **Source**, set:
+   - **Branch:** `main`
+   - **Folder:** `/docs`
+4. Click **Save**
+5. Wait ~60 seconds, then open the live link:
+
+```
+https://mehreen676.github.io/AI_Employee_Vault_Gold_Hackathon0/
+```
+
+> The dashboard files are pre-built static assets in `docs/` — no build step, no framework.
+> GitHub Pages serves them automatically after the setting is saved.
