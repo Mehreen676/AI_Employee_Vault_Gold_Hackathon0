@@ -15,6 +15,25 @@
 
 <p align="center"><em>Hackathon 0 · Personal AI Employee with full cross-domain autonomy</em></p>
 
+---
+
+## ✅ Live Deployment (Judge Proof)
+
+| | Link |
+|---|---|
+| **Frontend Dashboard** | https://mehreen676.github.io/AI_Employee_Vault_Gold_Hackathon0/ |
+| **Backend API (HuggingFace)** | https://mehreenasghar5-ai-employee-vault-gold.hf.space |
+| **Swagger Docs** | https://mehreenasghar5-ai-employee-vault-gold.hf.space/docs |
+
+### Quick Judge Verification
+
+1. Open **Frontend Dashboard** link above
+2. Confirm **API Health** card shows `Healthy`
+3. Click **📄 Open Swagger** button
+4. Confirm Swagger UI loads with all 15 endpoints
+
+---
+
 ## What Is This?
 
 A fully autonomous AI Employee that processes tasks from email or manual input, classifies them across **Personal** and **Business** domains, summarizes them with OpenAI, and loops until everything is done — then generates a **Weekly CEO Briefing**.
