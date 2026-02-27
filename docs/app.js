@@ -1,5 +1,8 @@
 /* ── Config ─────────────────────────────────────────────────────── */
-const BASE = 'http://localhost:8000';
+const API_BASE =
+  new URLSearchParams(window.location.search).get("api") ||
+  localStorage.getItem("AEV_API_BASE") ||
+  "https://mehreenasghar5-ai-employee-vault-gold.hf.space";
 
 /* ── Dummy activity feed (shown immediately, replaced on live data) */
 const DUMMY_ACTIVITY = [
@@ -23,7 +26,7 @@ function skeleton() {
 
 /* ── Fetch wrappers ─────────────────────────────────────────────── */
 async function getJSON(path) {
-  const r = await fetch(BASE + path, { signal: AbortSignal.timeout(5000) });
+  const r = await fetch(API_BASE + path, { signal: AbortSignal.timeout(5000) });
   if (!r.ok) throw new Error(`${r.status} ${r.statusText}`);
   return r.json();
 }
@@ -105,7 +108,7 @@ function renderActivity(items) {
 /* ── Quick-action buttons ────────────────────────────────────────── */
 function setupButtons() {
   el('btn-swagger')?.addEventListener('click', () =>
-    window.open(`${BASE}/docs`, '_blank'));
+    window.open(`${API_BASE}/docs`, '_blank'));
 
   el('btn-health')?.addEventListener('click', async () => {
     el('btn-health').textContent = '⏳ Checking…';
@@ -134,6 +137,14 @@ function setupButtons() {
     } catch { alert('API not reachable.'); }
     el('btn-agent').textContent = '🤖 Agent Status';
   });
+
+  /* ── Backend URL configurator ──────────────────────────────────── */
+  el('btn-save-api')?.addEventListener('click', () => {
+    const val = el('input-api-base')?.value.trim().replace(/\/$/, '');
+    if (!val) return;
+    localStorage.setItem('AEV_API_BASE', val);
+    window.location.reload();
+  });
 }
 
 /* ── Timestamp ──────────────────────────────────────────────────── */
@@ -144,6 +155,10 @@ function setTimestamp() {
 
 /* ── Init ───────────────────────────────────────────────────────── */
 async function init() {
+  /* Populate the API base input with current value */
+  const inputEl = el('input-api-base');
+  if (inputEl) inputEl.value = API_BASE;
+
   /* Show skeletons while loading */
   ['stat-status','stat-hitl','stat-mcp','stat-runs','stat-errors'].forEach(id =>
     set(id, skeleton()));
