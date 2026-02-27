@@ -39,6 +39,42 @@ Open `dashboard/index.html` locally for UI preview.
 
 ---
 
+## 🌐 Live Dashboard (GitHub Pages)
+
+The dashboard is hosted publicly via **GitHub Pages** — no server or build step required.
+
+**Live URL:**
+```
+https://mehreen676.github.io/AI_Employee_Vault_Gold_Hackathon0/
+```
+
+> To enable GitHub Pages: go to **Settings → Pages → Source**, set branch to `main`, folder to `/docs`, and save.
+
+### How it works
+
+- The static dashboard (`docs/index.html`, `docs/styles.css`, `docs/app.js`) is served by GitHub Pages.
+- On load, the dashboard calls the **Hugging Face Spaces backend** for live stats:
+  - `GET /health` → API Health card
+  - `GET /agent/status` → Agent Status + Total Runs
+  - `GET /hitl/pending` → HITL Pending count
+  - `GET /mcp/tools` → MCP Tools count
+- Stats auto-refresh every **30 seconds**.
+
+### Backend URL
+
+The dashboard's `app.js` points to `http://localhost:8000` by default (local dev).
+To connect to HuggingFace Spaces, update the `BASE` constant in `docs/app.js`:
+
+```js
+const BASE = 'https://<your-hf-username>-<your-space-name>.hf.space';
+```
+
+### Offline behaviour
+
+If the backend API is unreachable or not yet deployed, every stat card displays **"Offline"** — the dashboard never crashes or shows blank cards.
+
+---
+
 ## Architecture
 
 ```
