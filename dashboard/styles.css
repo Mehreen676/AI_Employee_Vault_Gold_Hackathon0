@@ -13,6 +13,7 @@
   --red:       #ef4444;
   --radius:    12px;
   --shadow:    0 4px 24px rgba(0,0,0,.45);
+  --bar-h:     32px;
 }
 
 html { font-size: 16px; }
@@ -22,6 +23,8 @@ body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   min-height: 100vh;
   line-height: 1.5;
+  /* leave room at the bottom for the fixed connected-bar */
+  padding-bottom: var(--bar-h);
 }
 
 /* ── Layout ─────────────────────────────────────────────────────── */
@@ -300,7 +303,7 @@ body {
   white-space: nowrap;
 }
 
-/* ── Footer ─────────────────────────────────────────────────────── */
+/* ── Page footer (credit line) ──────────────────────────────────── */
 .footer {
   margin-top: 3rem;
   text-align: center;
@@ -309,6 +312,40 @@ body {
 }
 
 .footer span { color: var(--gold); }
+
+/* ── Connected-to bar (fixed bottom) ────────────────────────────── */
+.connected-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bar-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  font-size: 0.7rem;
+  color: var(--muted);
+  z-index: 100;
+  gap: 0;
+  padding: 0 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.connected-link {
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color .15s;
+}
+
+.connected-link:hover {
+  color: #fde047;
+  text-decoration: underline;
+}
 
 /* ── Spinner (loading state) ────────────────────────────────────── */
 .skeleton {
@@ -332,4 +369,5 @@ body {
   .header h1 { font-size: 1rem; }
   .card-value { font-size: 1.4rem; }
   .btn { font-size: 0.78rem; padding: 0.5rem 0.85rem; }
+  .connected-bar { font-size: 0.62rem; }
 }
