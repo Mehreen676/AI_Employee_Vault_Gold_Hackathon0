@@ -1,0 +1,10 @@
+{
+  "id": "f3869802cabb",
+  "timestamp": "2026-02-28T11:25:38.273479+00:00",
+  "server": "mcp_audit_ops",
+  "action": "get_action_summary",
+  "details": {
+    "hours": 168
+  },
+  "success": true
+}
