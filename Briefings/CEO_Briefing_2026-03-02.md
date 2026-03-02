@@ -1,6 +1,6 @@
 # Weekly CEO Briefing
 
-**Generated:** 2026-03-02 09:11 UTC
+**Generated:** 2026-03-02 10:09 UTC
 **Week:** 2026-03-02 to 2026-03-08 (ISO Week 10)
 **Day:** Monday
 
@@ -46,18 +46,18 @@
 
 | Action | Count |
 |--------|-------|
-| mcp_audit_ops.get_recent_actions | 400 |
-| mcp_file_ops.list_tasks | 613 |
-| mcp_file_ops.read_task | 2003 |
 | gold_agent.loop_complete | 201 |
-| gold_agent.loop_start | 201 |
-| domain_router.get_all_domain_tasks | 201 |
-| gold_agent.agent_start | 201 |
 | mcp_calendar_ops.get_current_week | 402 |
+| gold_agent.loop_start | 201 |
+| mcp_file_ops.list_tasks | 613 |
+| gold_agent.agent_start | 201 |
+| domain_router.get_all_domain_tasks | 201 |
 | mcp_audit_ops.get_action_summary | 200 |
-| gold_agent.agent_complete | 200 |
-| ceo_briefing.save_briefing | 200 |
+| mcp_audit_ops.get_recent_actions | 400 |
+| mcp_file_ops.read_task | 2003 |
 | mcp_file_ops.write_task | 201 |
+| ceo_briefing.save_briefing | 200 |
+| gold_agent.agent_complete | 200 |
 | gold_agent.openai_config_missing | 1 |
 | social_mcp_stub.social_post_facebook_dry_run | 2 |
 | mcp_router.dispatch_ok.odoo_list_invoices | 2 |
