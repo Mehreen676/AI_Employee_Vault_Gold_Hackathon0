@@ -1,6 +1,6 @@
 # Weekly CEO Briefing
 
-**Generated:** 2026-03-04 04:56 UTC
+**Generated:** 2026-03-04 05:53 UTC
 **Week:** 2026-03-02 to 2026-03-08 (ISO Week 10)
 **Day:** Wednesday
 
@@ -11,9 +11,9 @@
 - **Tasks Completed This Week:** 28
 - **Business Tasks Active:** 1
 - **Personal Tasks Active:** 1
-- **Total System Actions (7d):** 5209
-- **Errors (7d):** 4
-- **System Health:** NEEDS ATTENTION
+- **Total System Actions (7d):** 5173
+- **Errors (7d):** 0
+- **System Health:** HEALTHY
 
 ---
 
@@ -46,51 +46,44 @@
 
 | Action | Count |
 |--------|-------|
-| social_mcp_stub.social_post_facebook_dry_run | 2 |
-| mcp_router.dispatch_ok.odoo_list_invoices | 2 |
-| odoo_mcp_stub.odoo_create_invoice_dry_run | 2 |
-| mcp_router.dispatch_ok.odoo_create_partner | 2 |
-| social_mcp_stub.social_post_twitter_dry_run | 2 |
-| odoo_mcp_stub.odoo_create_partner_dry_run | 2 |
-| mcp_router.dispatch_ok.social_get_analytics | 2 |
-| mcp_router.dispatch_ok.social_post_instagram | 2 |
-| social_mcp_stub.social_get_analytics_simulated | 2 |
-| mcp_router.dispatch_ok.odoo_create_invoice | 2 |
-| social_mcp_stub.social_post_instagram_dry_run | 2 |
-| mcp_router.dispatch_ok.social_post_facebook | 2 |
-| mcp_router.dispatch_ok.social_post_twitter | 2 |
-| odoo_mcp_stub.odoo_list_invoices_dry_run | 2 |
-| gold_agent.loop_start | 207 |
-| gold_agent.agent_start | 207 |
-| mcp_file_ops.list_tasks | 631 |
-| domain_router.classify_task | 3 |
-| mcp_file_ops.read_task | 2063 |
-| mcp_file_ops.move_task | 1 |
-| gold_agent.task_error | 3 |
-| gold_agent.max_retries_reached | 1 |
-| gold_agent.loop_complete | 207 |
-| mcp_file_ops.write_task | 207 |
 | mcp_calendar_ops.get_current_week | 414 |
+| gold_agent.loop_complete | 207 |
+| gold_agent.agent_start | 207 |
+| mcp_file_ops.list_tasks | 621 |
+| gold_agent.loop_start | 207 |
+| mcp_audit_ops.get_action_summary | 206 |
+| mcp_file_ops.read_task | 2060 |
 | mcp_audit_ops.get_recent_actions | 412 |
 | domain_router.get_all_domain_tasks | 207 |
-| mcp_audit_ops.get_action_summary | 206 |
-| ceo_briefing.save_briefing | 206 |
+| mcp_file_ops.write_task | 206 |
 | gold_agent.agent_complete | 206 |
+| ceo_briefing.save_briefing | 206 |
+| mcp_router.dispatch_ok.social_post_twitter | 1 |
+| mcp_router.dispatch_ok.odoo_create_invoice | 1 |
+| odoo_mcp_stub.odoo_create_partner_dry_run | 1 |
+| mcp_router.dispatch_ok.social_post_instagram | 1 |
+| odoo_mcp_stub.odoo_list_invoices_dry_run | 1 |
+| social_mcp_stub.social_post_instagram_dry_run | 1 |
+| mcp_router.dispatch_ok.odoo_list_invoices | 1 |
+| social_mcp_stub.social_get_analytics_simulated | 1 |
+| social_mcp_stub.social_post_facebook_dry_run | 1 |
+| mcp_router.dispatch_ok.social_post_facebook | 1 |
+| mcp_router.dispatch_ok.social_get_analytics | 1 |
+| social_mcp_stub.social_post_twitter_dry_run | 1 |
+| odoo_mcp_stub.odoo_create_invoice_dry_run | 1 |
+| mcp_router.dispatch_ok.odoo_create_partner | 1 |
 
 ---
 
 ## Errors & Issues
 
-- [2026-02-25T05:50:10.821908+00:00] gold_agent.task_error — Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
-- [2026-02-25T05:50:14.707270+00:00] gold_agent.task_error — Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
-- [2026-02-25T05:50:18.257447+00:00] gold_agent.task_error — Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}
-- [2026-02-25T05:50:19.620892+00:00] gold_agent.max_retries_reached — unknown
+- No errors this week.
 
 ---
 
 ## Recommendations
 
-- Review error log and address recurring failures.
+- System operating normally. No action required.
 - Task distribution is balanced.
 
 ---
