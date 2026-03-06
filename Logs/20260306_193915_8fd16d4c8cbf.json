@@ -1,0 +1,14 @@
+{
+  "id": "8fd16d4c8cbf",
+  "timestamp": "2026-03-06T19:39:15.906765+00:00",
+  "server": "mcp_calendar_ops",
+  "action": "get_current_week",
+  "details": {
+    "week_start": "2026-03-02",
+    "week_end": "2026-03-08",
+    "current_day": "Friday",
+    "current_date": "2026-03-06",
+    "iso_week": 10
+  },
+  "success": true
+}
