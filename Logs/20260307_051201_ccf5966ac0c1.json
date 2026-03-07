@@ -1,0 +1,11 @@
+{
+  "id": "ccf5966ac0c1",
+  "timestamp": "2026-03-07T05:12:01.987469+00:00",
+  "server": "domain_router",
+  "action": "get_all_domain_tasks",
+  "details": {
+    "business_count": 1,
+    "personal_count": 1
+  },
+  "success": true
+}
