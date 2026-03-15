@@ -1,0 +1,11 @@
+{
+  "id": "fcc18779bf20",
+  "timestamp": "2026-03-15T11:55:17.415856+00:00",
+  "server": "domain_router",
+  "action": "get_all_domain_tasks",
+  "details": {
+    "business_count": 1,
+    "personal_count": 1
+  },
+  "success": true
+}
