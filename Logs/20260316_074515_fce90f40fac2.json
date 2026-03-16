@@ -1,0 +1,11 @@
+{
+  "id": "fce90f40fac2",
+  "timestamp": "2026-03-16T07:45:15.551974+00:00",
+  "server": "domain_router",
+  "action": "get_all_domain_tasks",
+  "details": {
+    "business_count": 1,
+    "personal_count": 1
+  },
+  "success": true
+}
