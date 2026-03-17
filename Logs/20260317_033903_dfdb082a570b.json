@@ -1,0 +1,11 @@
+{
+  "id": "dfdb082a570b",
+  "timestamp": "2026-03-17T03:39:03.810527+00:00",
+  "server": "domain_router",
+  "action": "get_all_domain_tasks",
+  "details": {
+    "business_count": 1,
+    "personal_count": 1
+  },
+  "success": true
+}
