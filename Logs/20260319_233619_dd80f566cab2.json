@@ -1,0 +1,11 @@
+{
+  "id": "dd80f566cab2",
+  "timestamp": "2026-03-19T23:36:19.781094+00:00",
+  "server": "domain_router",
+  "action": "get_all_domain_tasks",
+  "details": {
+    "business_count": 1,
+    "personal_count": 1
+  },
+  "success": true
+}
