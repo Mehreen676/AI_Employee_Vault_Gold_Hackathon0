@@ -1,0 +1,11 @@
+{
+  "id": "d1969db1deba",
+  "timestamp": "2026-03-29T17:42:07.931226+00:00",
+  "server": "mcp_audit_ops",
+  "action": "get_recent_actions",
+  "details": {
+    "hours": 168,
+    "count": 4209
+  },
+  "success": true
+}
