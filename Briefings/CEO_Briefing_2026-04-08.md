@@ -1,6 +1,6 @@
 # Weekly CEO Briefing
 
-**Generated:** 2026-04-08 19:51 UTC
+**Generated:** 2026-04-08 20:53 UTC
 **Week:** 2026-04-06 to 2026-04-12 (ISO Week 15)
 **Day:** Wednesday
 
@@ -46,14 +46,14 @@
 
 | Action | Count |
 |--------|-------|
-| gold_agent.loop_start | 155 |
-| gold_agent.agent_start | 155 |
+| gold_agent.loop_complete | 155 |
 | mcp_file_ops.list_tasks | 465 |
 | mcp_calendar_ops.get_current_week | 310 |
-| gold_agent.loop_complete | 155 |
+| gold_agent.loop_start | 155 |
+| gold_agent.agent_start | 155 |
 | domain_router.get_all_domain_tasks | 155 |
-| mcp_audit_ops.get_action_summary | 154 |
 | mcp_audit_ops.get_recent_actions | 308 |
+| mcp_audit_ops.get_action_summary | 154 |
 | mcp_file_ops.read_task | 1540 |
 | ceo_briefing.save_briefing | 154 |
 | mcp_file_ops.write_task | 154 |
