@@ -1,0 +1,15 @@
+{
+  "id": "95af6a7b7252",
+  "timestamp": "2026-04-12T14:30:25.760868+00:00",
+  "server": "gold_agent",
+  "action": "agent_start",
+  "details": {
+    "model": "gpt-4o-mini",
+    "max_loops": 50,
+    "max_retries": 3,
+    "db_enabled": true,
+    "run_id": 1367,
+    "openai_required": true
+  },
+  "success": true
+}
