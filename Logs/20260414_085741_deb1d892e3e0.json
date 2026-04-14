@@ -1,0 +1,17 @@
+{
+  "id": "deb1d892e3e0",
+  "timestamp": "2026-04-14T08:57:41.082403+00:00",
+  "server": "gold_agent",
+  "action": "agent_complete",
+  "details": {
+    "loops": 1,
+    "tasks_processed": 0,
+    "tasks_failed": 0,
+    "retries": {},
+    "db_enabled": true,
+    "run_id": 1399,
+    "db_events": 24,
+    "openai_required": true
+  },
+  "success": true
+}
