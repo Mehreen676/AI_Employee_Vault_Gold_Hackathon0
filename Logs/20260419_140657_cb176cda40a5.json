@@ -1,0 +1,11 @@
+{
+  "id": "cb176cda40a5",
+  "timestamp": "2026-04-19T14:06:57.820011+00:00",
+  "server": "domain_router",
+  "action": "get_all_domain_tasks",
+  "details": {
+    "business_count": 1,
+    "personal_count": 1
+  },
+  "success": true
+}
