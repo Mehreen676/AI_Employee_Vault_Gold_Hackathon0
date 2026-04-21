@@ -1,0 +1,11 @@
+{
+  "id": "cabc91c6bcea",
+  "timestamp": "2026-04-21T17:46:22.480985+00:00",
+  "server": "domain_router",
+  "action": "get_all_domain_tasks",
+  "details": {
+    "business_count": 1,
+    "personal_count": 1
+  },
+  "success": true
+}
