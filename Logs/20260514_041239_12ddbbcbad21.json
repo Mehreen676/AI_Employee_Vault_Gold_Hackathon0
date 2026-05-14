@@ -1,0 +1,11 @@
+{
+  "id": "12ddbbcbad21",
+  "timestamp": "2026-05-14T04:12:39.364409+00:00",
+  "server": "mcp_audit_ops",
+  "action": "get_recent_actions",
+  "details": {
+    "hours": 168,
+    "count": 2311
+  },
+  "success": true
+}
