@@ -1,0 +1,11 @@
+{
+  "id": "fda7e70031ab",
+  "timestamp": "2026-05-30T17:51:58.669211+00:00",
+  "server": "mcp_audit_ops",
+  "action": "get_recent_actions",
+  "details": {
+    "hours": 168,
+    "count": 1811
+  },
+  "success": true
+}
