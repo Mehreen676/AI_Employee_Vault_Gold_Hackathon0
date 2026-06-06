@@ -1,0 +1,11 @@
+{
+  "id": "fbda80628221",
+  "timestamp": "2026-06-06T19:41:51.777551+00:00",
+  "server": "mcp_audit_ops",
+  "action": "get_recent_actions",
+  "details": {
+    "hours": 168,
+    "count": 1509
+  },
+  "success": true
+}
