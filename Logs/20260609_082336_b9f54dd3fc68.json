@@ -1,0 +1,11 @@
+{
+  "id": "b9f54dd3fc68",
+  "timestamp": "2026-06-09T08:23:36.023979+00:00",
+  "server": "domain_router",
+  "action": "get_all_domain_tasks",
+  "details": {
+    "business_count": 1,
+    "personal_count": 1
+  },
+  "success": true
+}
