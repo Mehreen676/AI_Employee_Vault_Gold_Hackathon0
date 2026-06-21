@@ -1,0 +1,11 @@
+{
+  "id": "5977de38863c",
+  "timestamp": "2026-06-21T18:22:53.667466+00:00",
+  "server": "mcp_audit_ops",
+  "action": "get_recent_actions",
+  "details": {
+    "hours": 168,
+    "count": 1461
+  },
+  "success": true
+}
