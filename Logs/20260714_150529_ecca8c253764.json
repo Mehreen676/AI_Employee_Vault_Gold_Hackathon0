@@ -1,0 +1,11 @@
+{
+  "id": "ecca8c253764",
+  "timestamp": "2026-07-14T15:05:29.506137+00:00",
+  "server": "mcp_audit_ops",
+  "action": "get_recent_actions",
+  "details": {
+    "hours": 168,
+    "count": 2234
+  },
+  "success": true
+}
