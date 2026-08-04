@@ -1,0 +1,11 @@
+{
+  "id": "caecb1264da2",
+  "timestamp": "2026-08-04T15:57:34.764451+00:00",
+  "server": "mcp_audit_ops",
+  "action": "get_recent_actions",
+  "details": {
+    "hours": 168,
+    "count": 2311
+  },
+  "success": true
+}
