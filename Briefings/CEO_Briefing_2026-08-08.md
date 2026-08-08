@@ -1,6 +1,6 @@
 # Weekly CEO Briefing
 
-**Generated:** 2026-08-08 10:39 UTC
+**Generated:** 2026-08-08 11:07 UTC
 **Week:** 2026-08-03 to 2026-08-09 (ISO Week 32)
 **Day:** Saturday
 
