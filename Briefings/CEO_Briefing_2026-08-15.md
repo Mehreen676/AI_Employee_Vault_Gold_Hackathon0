@@ -1,6 +1,6 @@
 # Weekly CEO Briefing
 
-**Generated:** 2026-08-15 02:40 UTC
+**Generated:** 2026-08-15 03:24 UTC
 **Week:** 2026-08-10 to 2026-08-16 (ISO Week 33)
 **Day:** Saturday
 
@@ -11,7 +11,7 @@
 - **Tasks Completed This Week:** 28
 - **Business Tasks Active:** 1
 - **Personal Tasks Active:** 1
-- **Total System Actions (7d):** 4134
+- **Total System Actions (7d):** 4159
 - **Errors (7d):** 0
 - **System Health:** HEALTHY
 
@@ -46,18 +46,18 @@
 
 | Action | Count |
 |--------|-------|
-| gold_agent.loop_start | 166 |
-| gold_agent.agent_start | 166 |
-| mcp_file_ops.list_tasks | 498 |
-| gold_agent.loop_complete | 166 |
-| mcp_calendar_ops.get_current_week | 332 |
-| domain_router.get_all_domain_tasks | 166 |
-| mcp_audit_ops.get_action_summary | 165 |
-| mcp_audit_ops.get_recent_actions | 330 |
-| mcp_file_ops.read_task | 1650 |
-| ceo_briefing.save_briefing | 165 |
-| mcp_file_ops.write_task | 165 |
-| gold_agent.agent_complete | 165 |
+| gold_agent.loop_start | 167 |
+| gold_agent.agent_start | 167 |
+| mcp_file_ops.list_tasks | 501 |
+| gold_agent.loop_complete | 167 |
+| mcp_calendar_ops.get_current_week | 334 |
+| domain_router.get_all_domain_tasks | 167 |
+| mcp_audit_ops.get_action_summary | 166 |
+| mcp_audit_ops.get_recent_actions | 332 |
+| mcp_file_ops.read_task | 1660 |
+| ceo_briefing.save_briefing | 166 |
+| mcp_file_ops.write_task | 166 |
+| gold_agent.agent_complete | 166 |
 
 ---
 
