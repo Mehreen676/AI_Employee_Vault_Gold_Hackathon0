@@ -1,0 +1,11 @@
+{
+  "id": "afb6230c487a",
+  "timestamp": "2026-08-20T19:22:10.595156+00:00",
+  "server": "mcp_audit_ops",
+  "action": "get_recent_actions",
+  "details": {
+    "hours": 168,
+    "count": 6284
+  },
+  "success": true
+}
