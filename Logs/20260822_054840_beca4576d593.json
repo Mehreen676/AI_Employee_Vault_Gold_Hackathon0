@@ -1,0 +1,11 @@
+{
+  "id": "beca4576d593",
+  "timestamp": "2026-08-22T05:48:40.508787+00:00",
+  "server": "domain_router",
+  "action": "get_all_domain_tasks",
+  "details": {
+    "business_count": 1,
+    "personal_count": 1
+  },
+  "success": true
+}
