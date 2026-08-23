@@ -1,0 +1,11 @@
+{
+  "id": "ccd9013c3588",
+  "timestamp": "2026-08-23T16:34:28.946349+00:00",
+  "server": "mcp_audit_ops",
+  "action": "get_recent_actions",
+  "details": {
+    "hours": 168,
+    "count": 6559
+  },
+  "success": true
+}
