@@ -1,0 +1,11 @@
+{
+  "id": "feca7537c712",
+  "timestamp": "2026-09-03T20:56:06.341835+00:00",
+  "server": "mcp_audit_ops",
+  "action": "get_recent_actions",
+  "details": {
+    "hours": 168,
+    "count": 934
+  },
+  "success": true
+}
